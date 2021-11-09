@@ -1,107 +1,143 @@
 
 
-class ViewMenus:
-    def menu_general(self):
-        print("""
-        -------- Menu Général -------
-        1 Tournois
-        2 Joueurs
-        3 Rapports
-        4 Quitter 
-        """)
-        ans = input("Entrez le numéro correspondant : ")
-        menu_info = []
-        menu_info.extend((ans))
-        return menu_info
+class HomeMenuView:
+        def __init__(self, menu):
+                self.menu = menu
 
-    def menu_tournois(self):
+        def _display_menu(self):
+                for key, entry in self.menu.items():
+                        print(f"{key}: {entry.option}")
+                print()
 
-        print("""
-         -------- Menu Tournois -------
-        1 Séléctionner un tournoi
-        2 Créer un tournoi
-        3 Revenir au menu général
-        4 Quitter
-        """)
-        ans = input("Entrez le numéro correspondant : ")
-        menu_info = []
-        menu_info.extend((ans))
-        return menu_info
-
-    def menu_tournoi_ouvert(self):
-        print("""
-        1 Séléctionner un joueur
-        2 Générer des paires
-        3 Publier un rapport
-        4 Sauvagarder
-        5 Clore le tournoi
-        6 Revenir au menu général
-        7 Quitter 
-           """)
-        ans = input("Entrez le numéro correspondant : ")
-        menu_info = []
-        menu_info.extend((ans))
-        return menu_info
-
-    def menu_joueurs(self):
-        print("""
-        -------- Menu Joueurs -------
-        1 choisir un joueur 
-        2 Ajouter un joueur
-        3 Revenir au menu général
-        4 Quitter 
-        """)
-        ans = input("Entrez le numéro correspondant : ")
-        menu_info = []
-        menu_info.extend((ans))
-        return menu_info
-
-    def menu_selectionner_joueurs(self):
-        print("""
-        1 choisir un joueur 
-        2 Ajouter un joueur
-        3 Revenir au menu général
-        4 Quitter 
-        """)
-        ans = input("Entrez le numéro correspondant : ")
-        menu_info = []
-        menu_info.extend((ans))
-        return menu_info
-
-    def menu_rapports(self):
-        print("""
-        -------- Menu Rapports -------
-        1 Séléctionner un tournoi
-        3 Revenir au menu général
-        4 Quitter 
-        """)
-        ans = input("Entrez le numéro correspondant : ")
-        menu_info = []
-        menu_info.extend((ans))
-        return menu_info
-
-    def menu_pubier_rapport(self):
-        print("""
-        1 Liste des acteurs
-        2 Liste des joueurs
-        3 Liste et résultats des rounds
-        4 Liste et résultats des matchs
-        5 Revenir au menu général
-        6 Quitter 
-            """)
-        ans = input("Entrez le numéro correspondant : ")
-        menu_info = []
-        menu_info.extend((ans))
-        return menu_info
-
-    def menu_choix_affichage(self):
-        print("""
-        1 par odre alphabétique
-        2 par classement
-            """)
-        ans = input("Entrez le numéro correspondant : ")
-        menu_info = []
-        menu_info.extend((ans))
-        return menu_info
+        def get_user_choice(self):
+                while True:
+                        self._display_menu() # 1 afficher le menu à l'utilisateur
+                        choice = input("Entrez votre choix : ") # 2 demander à l'utilisateur de faire un choix
+                        if choice in self.menu : # 3 valider le choix de l'utilisateur
+                                print()
+                                return self.menu[choice] # 4 retourner le choix de l'utilisateur
 
 
+class TournamentMenuController:
+        def __init__(self):
+                self.menu = menu
+
+        def _display_menu(self):
+                print("-------- Menu Tournoi -------")
+                for key, entry in self.menu.items():
+                        print(f"{key}: {entry.option}")
+                print()
+
+        def get_user_choice(self):
+                while True:
+                        self._display_menu()  # 1 afficher le menu à l'utilisateur
+                        choice = input("Entrez votre choix : ")  # 2 demander à l'utilisateur de faire un choix
+                        if choice in self.menu:  # 3 valider le choix de l'utilisateur
+                                print()
+                                return self.menu[choice]  # 4 retourner le choix de l'utilisateur
+
+class OpenTournamentMenuController:
+        def __init__(self, menu):
+                self.menu = menu
+
+        def _display_menu(self):
+                print("-------- Menu Tournoi en cours -------")
+                for key, entry in self.menu.items():
+                        print(f"{key}: {entry.option}")
+                print()
+
+        def get_user_choice(self):
+                while True:
+                        self._display_menu() # 1 afficher le menu à l'utilisateur
+                        choice = input("Entrez votre choix : ") # 2 demander à l'utilisateur de faire un choix
+                        if choice in self.menu : # 3 valider le choix de l'utilisateur
+                                print()
+                                return self.menu[choice] # 4 retourner le choix de l'utilisateur
+
+class PlayerMenuController:
+        def __init__(self, menu):
+                self.menu = menu
+
+        def _display_menu(self):
+                print("-------- Menu Joueurs -------")
+                for key, entry in self.menu.items():
+                        print(f"{key}: {entry.option}")
+                print()
+
+        def get_user_choice(self):
+                while True:
+                        self._display_menu() # 1 afficher le menu à l'utilisateur
+                        choice = input("Entrez votre choix : ") # 2 demander à l'utilisateur de faire un choix
+                        if choice in self.menu : # 3 valider le choix de l'utilisateur
+                                print()
+                                return self.menu[choice] # 4 retourner le choix de l'utilisateur
+
+class ReportMenuController:
+        def __init__(self, menu):
+                self.menu = menu
+
+        def _display_menu(self):
+                print("-------- Menu Rapports -------")
+                for key, entry in self.menu.items():
+                        print(f"{key}: {entry.option}")
+                print()
+
+        def get_user_choice(self):
+                while True:
+                        self._display_menu() # 1 afficher le menu à l'utilisateur
+                        choice = input("Entrez votre choix : ") # 2 demander à l'utilisateur de faire un choix
+                        if choice in self.menu : # 3 valider le choix de l'utilisateur
+                                print()
+                                return self.menu[choice] # 4 retourner le choix de l'utilisateur
+
+class PublishReportMenuController:
+        def __init__(self, menu):
+                self.menu = menu
+
+        def _display_menu(self):
+                print("-------- Menu publier un rapport -------")
+                for key, entry in self.menu.items():
+                        print(f"{key}: {entry.option}")
+                print()
+
+        def get_user_choice(self):
+                while True:
+                        self._display_menu()  # 1 afficher le menu à l'utilisateur
+                        choice = input("Entrez votre choix : ")  # 2 demander à l'utilisateur de faire un choix
+                        if choice in self.menu:  # 3 valider le choix de l'utilisateur
+                                print()
+                                return self.menu[choice]  # 4 retourner le choix de l'utilisateur
+
+class ListContributors:
+        def __init__(self, menu):
+                self.menu = menu
+
+        def _display_menu(self):
+                for key, entry in self.menu.items():
+                        print(f"{key}: {entry.option}")
+                print()
+
+        def get_user_choice(self):
+                while True:
+                        self._display_menu() # 1 afficher le menu à l'utilisateur
+                        choice = input("Entrez votre choix : ") # 2 demander à l'utilisateur de faire un choix
+                        if choice in self.menu : # 3 valider le choix de l'utilisateur
+                                print()
+                                return self.menu[choice] # 4 retourner le choix de l'utilisateur
+
+class ListSelectPlayer:
+        def __init__(self, menu):
+                self.menu = menu
+
+        def _display_menu(self):
+                for key, entry in self.menu.items():
+                        print(f"{key}: {entry.option}")
+                print()
+
+        def get_user_choice(self):
+                while True:
+                        self._display_menu() # 1 afficher le menu à l'utilisateur
+                        choice = input("Entrez votre choix : ") # 2 demander à l'utilisateur de faire un choix
+                        if choice in self.menu : # 3 valider le choix de l'utilisateur
+                                print()
+                                return self.menu[choice] # 4 retourner le choix de l'utilisateur
