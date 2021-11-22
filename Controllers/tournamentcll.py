@@ -6,6 +6,7 @@ class ControllerTournament:
         self.view = ViewTournament()
 
     def __call__(self):
-        tournament_info = self.view.info()
-        print(*tournament_info)
-        player1 = Tournament(*tournament_info)
+        tournaments_info = self.view.info()
+        print(*tournaments_info)
+        tourmament1 = Tournament(*tournaments_info)
+        return Tournament.update(tourmament1)

@@ -1,21 +1,58 @@
+from tinydb import TinyDB, Query, where
+
+db = TinyDB("./mvc/db.json")
+
+player_db = db.table('player_db')
+
 
 
 class Player:
-    def __init__(self, name, first_name, date_birth, sexe, classement):
-        player = Player(name, first_name, date_birth, sexe, classement)
+
+    def __init__(self, name,
+                 first_name,
+                 date_birth,
+                 sexe,
+                 classement,
+                 player_id=0):
+        self.name = name
+        self.first_name = first_name
+        self.date_birth = date_birth
+        self.sexe = sexe
+        self.classement = classement
+        self.player_id = player_id
+
+    def serialized(player):
         serialized_player = {
             'name': player.name,
             'first_name': player.first_name,
             'date_birth': player.date_birth,
             'sexe': player.sexe,
-            'classement': player.classement
+            'classement': player.classement,
+            'player_id': player.player_id
         }
-        self.name = serialized_player['name']
-        self.first_name = serialized_player['first_name']
-        self.date_birth = serialized_player['date_birth']
-        self.sexe = serialized_player['sexe']
-        self.classement = serialized_player['classement']
+        return serialized_player
 
+    def add(player):
+        serialized_player = {
+            'name': player.name,
+            'first_name': player.first_name,
+            'date_birth': player.date_birth,
+            'sexe': player.sexe,
+            'classement': player.classement,
+            'player_id': player.player_id
+        }
+
+        player_db.insert(serialized_player)
+
+        print(player_db)
+
+
+
+    def update(player):
+        player_id = player_db.search(where('player_id') == player.player_id)
+        player_id = player_db.insert(player.serialized())
+        player_db.update({'Id du joueur': player_id}, doc_ids=[player_id])
+        #name = player_db.search(where('name') == player.name)  # vérifier qu'un joueur à un nom si correct alors update
 
     def __str__(self):
         return f"{self.name} {self.first_name} {self.date_birth} {self.sexe} {self.classement}"
