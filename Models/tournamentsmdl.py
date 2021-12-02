@@ -4,25 +4,21 @@ db = TinyDB("./mvc/db.json")
 tournament_db = db.table('tournament_db')
 
 
+
 class Tournament:
     def __init__(self, name, site, start_date, end_date,
-                 description_tournament, number_round=4,
-                 tournament_id=0):
+                 description_tournament, choosetime, assignplayer, number_round=4):
         self.name = name
         self.site = site
         self.start_date = start_date
         self.end_date = end_date
         self.description_tournament = description_tournament
+        self.choosetime = choosetime
+        self.assignplayer = assignplayer
         self.number_round = number_round
-        self.tournament_id = tournament_id
         self.instances_match = []
-        self.instance_playeurs = []
+        self.instance_players = []
 
-
-    def choose_time (self, bullet, blitz, coup_rapide):
-        self.bullet = bullet
-        self.blitz = blitz
-        self.coup_rapide = coup_rapide
 
     def serialized(tournament):
         serialized_tournament = {
@@ -31,8 +27,8 @@ class Tournament:
             'start_date': tournament.start_date,
             'end_date': tournament.end_date,
             'description_tournament': tournament.description_tournament,
-            'number_round': tournament.number_round,
-            'tournament_id': tournament.tournament_id
+            'choosetime': tournament.choosetime,
+            'number_round': tournament.number_round
         }
         return serialized_tournament
 
@@ -44,7 +40,6 @@ class Tournament:
             'end_date': tournament.end_date,
             'description_tournament': tournament.description_tournament,
             'number_round': tournament.number_round,
-            'tournament_id': tournament.tournament_id
         }
 
         tournament_db.insert(serialized_tournament)
@@ -60,3 +55,15 @@ class Tournament:
 
     def __str__(self):
         return f"{self.name}, {self.site}"
+
+
+    def addplayer(self):
+        nouveau = ViewPlayer.info(self)
+        nouveauplayer = tournament.update(nouveau)
+
+
+    def showlistplayer(self):
+            for k, Player in enumerate(player_db):
+                print("[",k,"]", Player)
+            choosenameplayer=int(input("Entrez le numéro du joueur : "))
+            return choosenameplayer

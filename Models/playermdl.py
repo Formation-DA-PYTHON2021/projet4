@@ -12,14 +12,12 @@ class Player:
                  first_name,
                  date_birth,
                  sexe,
-                 classement,
-                 player_id=0):
+                 classement):
         self.name = name
         self.first_name = first_name
         self.date_birth = date_birth
         self.sexe = sexe
         self.classement = classement
-        self.player_id = player_id
 
     def serialized(player):
         serialized_player = {
@@ -27,8 +25,7 @@ class Player:
             'first_name': player.first_name,
             'date_birth': player.date_birth,
             'sexe': player.sexe,
-            'classement': player.classement,
-            'player_id': player.player_id
+            'classement': player.classement
         }
         return serialized_player
 
@@ -38,8 +35,7 @@ class Player:
             'first_name': player.first_name,
             'date_birth': player.date_birth,
             'sexe': player.sexe,
-            'classement': player.classement,
-            'player_id': player.player_id
+            'classement': player.classement
         }
 
         player_db.insert(serialized_player)
@@ -49,10 +45,11 @@ class Player:
 
 
     def update(player):
-        player_id = player_db.search(where('player_id') == player.player_id)
+        #name = player_db.search(where('name') == player.name)
         player_id = player_db.insert(player.serialized())
         player_db.update({'Id du joueur': player_id}, doc_ids=[player_id])
-        #name = player_db.search(where('name') == player.name)  # vérifier qu'un joueur à un nom si correct alors update
 
     def __str__(self):
         return f"{self.name} {self.first_name} {self.date_birth} {self.sexe} {self.classement}"
+
+

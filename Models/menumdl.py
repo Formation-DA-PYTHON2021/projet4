@@ -32,3 +32,4 @@ class Menu:
     def __getitem__(self, choice):
         return self._entries[choice]
 
+

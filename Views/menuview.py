@@ -16,5 +16,3 @@ class HomeMenuView:
                         if choice in self.menu : # 3 valider le choix de l'utilisateur
                                 print()
                                 return self.menu[choice] # 4 retourner le choix de l'utilisateur
-
-

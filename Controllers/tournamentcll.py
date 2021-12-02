@@ -1,6 +1,7 @@
 from ..Views.tournamentview import ViewTournament
 from ..Models.tournamentsmdl import Tournament
 
+
 class ControllerTournament:
     def __init__(self):
         self.view = ViewTournament()

@@ -1,3 +1,5 @@
+import sys
+
 from ..Views.menuview import HomeMenuView
 from ..Models.menumdl import Menu
 from ..Controllers.tournamentcll import ControllerTournament
@@ -32,6 +34,7 @@ class HomeMenuController:
         #3 retourner le controller associer au choix de l'utilisateur au controller principal
         return user_choice.handler
 
+
 class TournamentMenuController:
     def __call__(self):
         return ControllerTournament()
@@ -48,8 +51,10 @@ class ResumingTournament:
     pass # appel la methode pour revenir au tournoi en cours
 
 class ReportMenuController:
-    pass # appel la methode pour lancer le raport ou choisir un tournoi
+    pass # appel la methode pour lancer le rapport ou choisir un tournoi
 
 class EndScreenMenuController:
     def __call__(self):
-        return HomeMenuController()
+        sys.exit()
+
+
