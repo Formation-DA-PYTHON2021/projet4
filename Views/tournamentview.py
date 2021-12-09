@@ -1,7 +1,3 @@
-from ..Models.playermdl import Player
-from ..Views.playerview import ViewPlayer
-from ..Models.tournamentsmdl import Tournament
-
 from tinydb import TinyDB, Query, where
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
@@ -17,23 +13,21 @@ class ViewTournament:
             choose_time = self.choose_time()
             assign_player = self.assign_player()
             tournaments_info = []
-            tournaments_info.extend((name, name_site, start_date, end_date, description_tournament, choose_time, assign_player))
-            return tournaments_info()
+            tournaments_info.extend((name, name_site, start_date, end_date, description_tournament,
+                                     choose_time, assign_player))
+            return tournaments_info
 
-    def assign_player(self, tournament=Tournament):
-        assignplayer=int(input("Voulez vous assigner un joueur au tournoi ? : [1] Oui creér un joueur, "
-                                   "[2] Oui choisir dans la liste, "
-                                   "[3] Non :  "))
-        if assignplayer == 1:
-            pass
-        elif assignplayer == 2:
-            pass
-        elif assignplayer ==3:
-            pass
+    def assign_player(self):
+        addplayer = player_db.all()
+        player = []
+        for elm in addplayer:
+            print(elm['name'])
+            player.append(elm['name'])
+        assignplayer = str(input("Assigner un joueur au tournoi. Rentrer son nom : "))
+        if assignplayer in player:
+            return assignplayer
         else:
-            print("Vous devez entrer le numéro de votre choix.")
-            return self.assign_player()
-
+            print("Entrer le bon nom : ")
 
     def choose_time(self):
         choosetime = int(input("Entrez le contrôle du temps : [1] Bullet , [2] Blitz, [3] Coup rapide : "))
@@ -46,4 +40,3 @@ class ViewTournament:
         else:
             print("Vous devez entrer le numéro de votre choix.")
             return self.choose_time()
-

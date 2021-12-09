@@ -11,4 +11,3 @@ class ControllerPlayer:
         print(*players_info)
         player1 = Player(*players_info)
         return Player.update(player1)
-

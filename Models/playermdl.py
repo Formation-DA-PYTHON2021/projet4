@@ -1,7 +1,6 @@
 from tinydb import TinyDB, Query, where
 
 db = TinyDB("./mvc/db.json")
-
 player_db = db.table('player_db')
 
 
@@ -40,12 +39,12 @@ class Player:
 
         player_db.insert(serialized_player)
 
-        print(player_db)
+        print(db)
 
 
 
     def update(player):
-        #name = player_db.search(where('name') == player.name)
+        #name = db.search(where('name') == player.name)
         player_id = player_db.insert(player.serialized())
         player_db.update({'Id du joueur': player_id}, doc_ids=[player_id])
 

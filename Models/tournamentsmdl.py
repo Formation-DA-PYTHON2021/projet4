@@ -1,24 +1,23 @@
-from tinydb import TinyDB, Query, where
-db = TinyDB("./mvc/db.json")
+from tinydb import TinyDB
 
+db = TinyDB("./mvc/db.json")
 tournament_db = db.table('tournament_db')
 
 
 
 class Tournament:
     def __init__(self, name, site, start_date, end_date,
-                 description_tournament, choosetime, assignplayer, number_round=4):
+                 description_tournament, choose_time, assign_player, number_round=4):
         self.name = name
         self.site = site
         self.start_date = start_date
         self.end_date = end_date
         self.description_tournament = description_tournament
-        self.choosetime = choosetime
-        self.assignplayer = assignplayer
+        self.choose_time = choose_time
+        self.assign_player = assign_player
         self.number_round = number_round
         self.instances_match = []
         self.instance_players = []
-
 
     def serialized(tournament):
         serialized_tournament = {
@@ -27,7 +26,8 @@ class Tournament:
             'start_date': tournament.start_date,
             'end_date': tournament.end_date,
             'description_tournament': tournament.description_tournament,
-            'choosetime': tournament.choosetime,
+            'choose_time': tournament.choose_time,
+            'assign_player': tournament.assign_player,
             'number_round': tournament.number_round
         }
         return serialized_tournament
@@ -39,12 +39,14 @@ class Tournament:
             'start_date': tournament.start_date,
             'end_date': tournament.end_date,
             'description_tournament': tournament.description_tournament,
+            'choose_time': tournament.choose_time,
+            'assign_player': tournament.assign_player,
             'number_round': tournament.number_round,
         }
 
         tournament_db.insert(serialized_tournament)
 
-        print(tournament_db)
+        print(db)
 
 
 
@@ -55,15 +57,3 @@ class Tournament:
 
     def __str__(self):
         return f"{self.name}, {self.site}"
-
-
-    def addplayer(self):
-        nouveau = ViewPlayer.info(self)
-        nouveauplayer = tournament.update(nouveau)
-
-
-    def showlistplayer(self):
-            for k, Player in enumerate(player_db):
-                print("[",k,"]", Player)
-            choosenameplayer=int(input("Entrez le numéro du joueur : "))
-            return choosenameplayer
