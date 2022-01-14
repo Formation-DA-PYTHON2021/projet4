@@ -11,27 +11,43 @@ tournament_db = db.table('tournament_db')
 
 
 class Match:
-    def info(self, player1, score1, player2, score2):
+    def __init__(self, player1, score1, player2, score2):
         self.player1 = [player1, score1]
         self.player2 = [player2, score2]
 
+
+class Round:
+    def __init__(self, name=None, begin_time=None, end_time=None,
+                 list_score_matchs=None):
+        self.name = name
+        self.begin_time = begin_time
+        self.end_time = end_time
+        self.list_score_matchs = list_score_matchs
+        self.instances_rounds = []
 
 class LaunchTournament:
 
     def selectournament(self):
         dispalytournament = tournament_db.all()
-        tournaments = []
+        #print(dispalytournament)
         for i in dispalytournament:
             print(i['name'])
-            selectournament = str(input("choisir un tournoi. Rentrer son nom : "))
-        if selectournament in tournaments:
-            return selectournament
+        selectournament = str(input("Pour choisir un tournoi, rentrer son nom : "))
+        infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
+        print([infoselecttournament])
+        return self.players_match(infoselecttournament)
         #print list tournament + faire demander un choix + selctionner (voir avec cll)
 
-    def first_round(self, round):
+    def players_match(self,infoselecttournament):
+        print(infoselecttournament['assign_player'])
+        playerliste = infoselecttournament.search(where('assign_player') =='playerA')
+        print([playerliste])
+        'récup des joueurs dans ce tournoi + stock dans une liste'
+        '''return (first_round(playerlist = 'liste des joueurs stocké'))'''
+
+    def first_round(self, playerlist):
         """classer la liste par ranking (fonct : sort ou sorted)"""
-        players_match = ViewTournament.assign_player()
-        players_match_sort = sorted(players_match, key=lambda player: player.ranking)
+        players_match_sort = sorted(playerlist, key=lambda player: player.ranking)
         """diviser la liste en 2 listes"""
         players_match_l1 = players_match_sort[0:3]
         players_match_l2 = players_match_sort[4:9]
@@ -41,7 +57,7 @@ class LaunchTournament:
             players_match_l1[i].add(players_match_l2[i])
             players_match_l2.add(players_match_l1[i])
             round.addMatch(match)
-        print("les matchs du premier round sont les suivants : ")
+        print("les rencontres du premier round sont les suivantes : ")
         for m in round.instances_match:
             print(m.player1[0].name + "vs" + m.player2[0].name)
         return round
@@ -98,3 +114,7 @@ class LaunchTournament:
 
     def save_tournament(self):
         pass
+
+if __name__ == "__main__":
+    app = LaunchTournament()
+    app.selectournament()

@@ -7,7 +7,7 @@ tournament_db = db.table('tournament_db')
 
 class Tournament:
     def __init__(self, name, site, start_date, end_date,
-                 description_tournament, choose_time, assign_player, number_round=4):
+                 description_tournament, choose_time, assign_player, number_round=4, isend=False):
         self.name = name
         self.site = site
         self.start_date = start_date
@@ -16,6 +16,8 @@ class Tournament:
         self.choose_time = choose_time
         self.assign_player = assign_player
         self.number_round = number_round
+        self.isend = isend
+        self.instances_rounds = []
         self.instances_match = []
         self.instance_players = []
 
@@ -28,7 +30,8 @@ class Tournament:
             'description_tournament': tournament.description_tournament,
             'choose_time': tournament.choose_time,
             'assign_player': tournament.assign_player,
-            'number_round': tournament.number_round
+            'number_round': tournament.number_round,
+            'isend': tournament.isend
         }
         return serialized_tournament
 
@@ -42,6 +45,7 @@ class Tournament:
             'choose_time': tournament.choose_time,
             'assign_player': tournament.assign_player,
             'number_round': tournament.number_round,
+            'isend': tournament.isend
         }
 
         tournament_db.insert(serialized_tournament)
@@ -54,6 +58,8 @@ class Tournament:
         tournament_id = tournament_db.insert(tournament.serialized())
         tournament_db.update({'Id du tournois': tournament_id}, doc_ids=[tournament_id])
 
+    def addMatch(self, match):
+        self.instances_match.append(match)
 
     def __str__(self):
         return f"{self.name}, {self.site}"

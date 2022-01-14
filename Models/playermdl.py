@@ -11,12 +11,13 @@ class Player:
                  first_name,
                  date_birth,
                  sexe,
-                 classement):
+                 ranking):
         self.name = name
         self.first_name = first_name
         self.date_birth = date_birth
         self.sexe = sexe
-        self.classement = classement
+        self.ranking = ranking
+        self.total_points = 0
 
     def serialized(player):
         serialized_player = {
@@ -24,7 +25,7 @@ class Player:
             'first_name': player.first_name,
             'date_birth': player.date_birth,
             'sexe': player.sexe,
-            'classement': player.classement
+            'ranking': player.ranking
         }
         return serialized_player
 
@@ -34,7 +35,7 @@ class Player:
             'first_name': player.first_name,
             'date_birth': player.date_birth,
             'sexe': player.sexe,
-            'classement': player.classement
+            'ranking': player.ranking
         }
 
         player_db.insert(serialized_player)
@@ -49,6 +50,6 @@ class Player:
         player_db.update({'Id du joueur': player_id}, doc_ids=[player_id])
 
     def __str__(self):
-        return f"{self.name} {self.first_name} {self.date_birth} {self.sexe} {self.classement}"
+        return f"{self.name} {self.first_name} {self.date_birth} {self.sexe} {self.ranking}"
 
 
