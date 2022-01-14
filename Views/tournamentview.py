@@ -46,27 +46,25 @@ class ViewResumingTournament:
         selectournament = str(input("Pour choisir un tournoi, rentrer son nom : "))
         infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
         print([infoselecttournament])
-        # return self.players_match(infoselecttournament)
-        # doit retourner le tournois ou il s'est arrêté
         assign_players = []
-        cmpt = 0
-        while cmpt < 8:
-            choose_player = self.choose_player()
-            assign_players.append(choose_player)
-            cmpt += 1
+        self.choose_player()
 
     def choose_player(self):
-        print("--------Ajouter le joureur n°1-------------\n")
-        choose = str(input("[1] Ajouter un nouveau joueur \n " \
-                           "[2] Ajouter un joueur existant \n"))
-
-        for i in choose:
-            if i == 1:
+        num = 1
+        while num <= 8:
+            print("--------Ajouter le joureur n°"f'{num}'"-------------\n")
+            choose = input("[1] Ajouter un nouveau joueur \n " \
+                           "[2] Ajouter un joueur existant \n >> ")
+            if choose == '1':
                 return self.create_player()
-            elif i == 2:
+            elif choose == '2':
                 return self.assign_player()
-        else:
-            return self.choose_player()
+            else:
+                print("Appuiez sur '1' ou '2' \n >> ")
+            num += 1
+            choose_info = []
+            choose_info.extend(choose)
+
 
     def assign_player(self):
         addplayer = player_db.all()
