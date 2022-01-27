@@ -46,25 +46,34 @@ class ViewResumingTournament:
         selectournament = str(input("Pour choisir un tournoi, rentrer son nom : "))
         infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
         print([infoselecttournament])
-        assign_players = []
-        self.choose_player()
+        choose_player = self.choose_player()
+        nouvelleliste = Query()
+        maj = tournament_db.update({'assign_player': [choose_player]}, nouvelleliste.name == selectournament)
+        return maj
+
 
     def choose_player(self):
         num = 1
         while num <= 8:
-            print("--------Ajouter le joureur n°"f'{num}'"-------------\n")
-            choose = input("[1] Ajouter un nouveau joueur \n " \
-                           "[2] Ajouter un joueur existant \n >> ")
+            print("\n--------Ajouter le joueur n° "f'{num}'"-------------\n")
+            choose = input("[1] Ajouter un nouveau joueur \n[2] Ajouter un joueur existant \n >> ")
             if choose == '1':
-                return self.create_player()
+                self.create_player()
             elif choose == '2':
-                return self.assign_player()
+                self.assign_player()
             else:
                 print("Appuiez sur '1' ou '2' \n >> ")
+                self.choose_player()
             num += 1
-            choose_info = []
-            choose_info.extend(choose)
 
+    def create_player(self):
+        name = input("Entrez le nom : ")
+        first_name = input("Entrez le prénom : ")
+        date_birth = input("Entrez la date de naissance (JJ/MM/AAA) : ")
+        sexe = input("Entrez le sexe (F/M) : ")
+        ranking = input("Entrez le classement : ")
+        resuming_info = [name, first_name, date_birth, sexe, ranking]
+        return resuming_info
 
     def assign_player(self):
         addplayer = player_db.all()
@@ -77,13 +86,6 @@ class ViewResumingTournament:
             return assignplayer
         else:
             print("Entrer le bon nom : ")
+            return self.assign_player()
 
-    def create_player(self):
-        name = input("Entrez le nom : ")
-        first_name = input("Entrez le prénom : ")
-        date_birth = input("Entrez la date de naissance (JJ/MM/AAA) : ")
-        sexe = input("Entrez le sexe (F/M) : ")
-        ranking = input("Entrez le classement : ")
-        assign_players = []
-        assign_players.extend((name, first_name, date_birth, sexe, ranking))
-        return assign_players
+# mettre seulement dans le tournois en cours (dans le controller)
