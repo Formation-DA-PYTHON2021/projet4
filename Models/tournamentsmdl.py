@@ -53,7 +53,6 @@ class Tournament:
         print(db)
 
 
-
     def update(tournament):
         tournament_id = tournament_db.insert(tournament.serialized())
         tournament_db.update({'Id du tournois': tournament_id}, doc_ids=[tournament_id])

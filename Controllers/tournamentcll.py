@@ -3,7 +3,6 @@ from ..Views.tournamentview import ViewTournament
 from ..Models.tournamentsmdl import Tournament
 from ..Views.tournamentview import ViewResumingTournament
 
-
 class ControllerTournament:
     def __init__(self):
         self.view = ViewTournament()
@@ -20,6 +19,4 @@ class ControllerResumingTournament:
 
     def __call__(self):
         resuming_info = self.view.info()
-        print(*resuming_info)
-        resuming1 = Tournament(*resuming_info)
-        return Tournament.update(resuming1)
+        return resuming_info

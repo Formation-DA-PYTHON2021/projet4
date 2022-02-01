@@ -4,7 +4,6 @@ db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
 tournament_db = db.table('tournament_db')
 
-
 class ViewTournament:
     def info(self):
         print("-------------------------------------------------\n"
@@ -46,25 +45,21 @@ class ViewResumingTournament:
         selectournament = str(input("Pour choisir un tournoi, rentrer son nom : "))
         infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
         print([infoselecttournament])
-        choose_player = self.choose_player()
-        nouvelleliste = Query()
-        maj = tournament_db.update({'assign_player': [choose_player]}, nouvelleliste.name == selectournament)
-        return maj
-
-
-    def choose_player(self):
+        players = []
         num = 1
-        while num <= 8:
+        while num <= 2:
             print("\n--------Ajouter le joueur n° "f'{num}'"-------------\n")
             choose = input("[1] Ajouter un nouveau joueur \n[2] Ajouter un joueur existant \n >> ")
             if choose == '1':
-                self.create_player()
+                players.append(self.create_player())
             elif choose == '2':
-                self.assign_player()
+                players.append(self.assign_player())
             else:
                 print("Appuiez sur '1' ou '2' \n >> ")
-                self.choose_player()
+                return choose
             num += 1
+        nouvelleliste = Query()
+        tournament_db.update({'assign_player': players}, nouvelleliste.name == selectournament)
 
     def create_player(self):
         name = input("Entrez le nom : ")
@@ -85,7 +80,6 @@ class ViewResumingTournament:
         if assignplayer in player:
             return assignplayer
         else:
-            print("Entrer le bon nom : ")
+            print("\n-------\nErreur de nom!\nVeuillez saisir le bon nom dans la liste ci-dessous "
+                  "(attention à l'orthographe) :\n-------")
             return self.assign_player()
-
-# mettre seulement dans le tournois en cours (dans le controller)
