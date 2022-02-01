@@ -29,8 +29,6 @@ class HomeMenuController:
               "-------------------------------------------------")
         # 1 construire un menu
         self.menu.add("auto", "Créer un tournois", TournamentMenuController()) #menu.add(key,option, controller)
-        #self.menu.add("auto", "Créer un joueurs", PlayerMenuController())
-        #self.menu.add("auto", "Lancer un tournoi", LaunchTournament())
         self.menu.add("auto", "Reprendre un tournoi", ResumingTournament())
         self.menu.add("auto", "Rapports", ReportMenuController())
         self.menu.add("auto", "quitter", EndScreenMenuController())
