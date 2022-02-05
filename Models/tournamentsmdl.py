@@ -62,3 +62,15 @@ class Tournament:
 
     def __str__(self):
         return f"{self.name}, {self.site}"
+
+class Round:
+    def __init__(self, name=None, begin_time=None, end_time=None,
+                     list_score_matchs=None):
+        self.name = name
+        self.begin_time = begin_time
+        self.end_time = end_time
+        self.list_score_matchs = list_score_matchs
+        self.instances_rounds = []
+
+class Match:
+    pass

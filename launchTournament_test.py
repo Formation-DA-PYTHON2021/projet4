@@ -16,14 +16,7 @@ class Match:
         self.player2 = [player2, score2]
 
 
-class Round:
-    def __init__(self, name=None, begin_time=None, end_time=None,
-                 list_score_matchs=None):
-        self.name = name
-        self.begin_time = begin_time
-        self.end_time = end_time
-        self.list_score_matchs = list_score_matchs
-        self.instances_rounds = []
+
 
 class LaunchTournament:
 
@@ -46,6 +39,7 @@ class LaunchTournament:
         '''return (first_round(playerlist = 'liste des joueurs stocké'))'''
 
     def first_round(self, playerlist):
+        round1 = self.rounds()
         """classer la liste par ranking (fonct : sort ou sorted)"""
         players_match_sort = sorted(playerlist, key=lambda player: player.ranking)
         """diviser la liste en 2 listes"""
@@ -56,17 +50,17 @@ class LaunchTournament:
             match = Match(players_match_l1[i], 0, players_match_l2[i], 0)
             players_match_l1[i].add(players_match_l2[i])
             players_match_l2.add(players_match_l1[i])
-            round.addMatch(match)
+            round1.addMatch(match)
         print("les rencontres du premier round sont les suivantes : ")
-        for m in round.instances_match:
+        for m in round1.instances_match:
             print(m.player1[0].name + "vs" + m.player2[0].name)
-        return round
+        return round1
     # match : modifier score + ad resultat
 
     def next_round(self):
         pass
 
-    def round(self, name, start_date_time, end_date_time):
+    def rounds(self, name, start_date_time, end_date_time):
         self.name = name
         self.start_date_time = start_date_time
         self.end_date_time = end_date_time

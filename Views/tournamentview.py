@@ -45,9 +45,10 @@ class ViewResumingTournament:
         selectournament = str(input("Pour choisir un tournoi, rentrer son nom : "))
         infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
         print([infoselecttournament])
+        # dans une class et diviser les 2 et faire un update dans le controller
         players = []
         num = 1
-        while num <= 2:
+        while num <= 4:
             print("\n--------Ajouter le joueur n° "f'{num}'"-------------\n")
             choose = input("[1] Ajouter un nouveau joueur \n[2] Ajouter un joueur existant \n >> ")
             if choose == '1':
@@ -58,8 +59,13 @@ class ViewResumingTournament:
                 print("Appuiez sur '1' ou '2' \n >> ")
                 return choose
             num += 1
-        nouvelleliste = Query()
-        tournament_db.update({'assign_player': players}, nouvelleliste.name == selectournament)
+        maj = Query()
+        tournament_db.update({'assign_player': players}, maj.name == selectournament)
+        newlist = []
+        for i in players:
+            newlist.append(player_db.search((where('name') == i)))
+        return newlist
+
 
     def create_player(self):
         name = input("Entrez le nom : ")
