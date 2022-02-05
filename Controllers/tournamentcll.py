@@ -19,15 +19,17 @@ class ControllerResumingTournament:
     def __call__(self):
         selectourna = self.view.info()
         resuming_info = self.view.choose_player(selectourna)
-        self.first_round(resuming_info)
+        matche= self.first_round(resuming_info)
+        self.view.first_round(matche)
+        self.view.enter_result_match()
         return resuming_info
 
 
     def first_round(self, players):
-        print("player==============>", players)
+        #print("player==============>", players)
         #players = sorted(players, key=lambda player: player.ranking)
         middle = len(players) // 2
         groups = players[:middle], players[middle:]
         matches = list(zip(groups[0], groups[1]))
-        print(matches)
+        return matches
 

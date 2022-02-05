@@ -91,4 +91,20 @@ class ViewResumingTournament:
                   "(attention à l'orthographe) :\n-------")
             return self.assign_player()
 
+    def first_round(self, matches):
+        print("les rencontres du premier round sont les suivantes : \n > Le premier match opposera : ")
+        for i in matches[0]:
+            print(i)
+        print(" > le second match opposera :")
+        for j in matches[1]:
+            print(j)
+        print(" > le troisième match opposera :")
+        for k in matches[2]:
+            print(k)
+        print(" > le quatrième match opposera :")
+        for m in matches[3]:
+            print(m)
+
+    def enter_result_match(self, matches):
+        print("Veuillez entrer le résultat du match.")
 
