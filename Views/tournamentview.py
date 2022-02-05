@@ -44,8 +44,9 @@ class ViewResumingTournament:
             print(i['name'])
         selectournament = str(input("Pour choisir un tournoi, rentrer son nom : "))
         infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
-        print([infoselecttournament])
-        # dans une class et diviser les 2 et faire un update dans le controller
+        return selectournament
+
+    def choose_player(self, selectournament):
         players = []
         num = 1
         while num <= 4:
@@ -89,3 +90,5 @@ class ViewResumingTournament:
             print("\n-------\nErreur de nom!\nVeuillez saisir le bon nom dans la liste ci-dessous "
                   "(attention à l'orthographe) :\n-------")
             return self.assign_player()
+
+
