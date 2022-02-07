@@ -21,7 +21,7 @@ class ControllerResumingTournament:
         resuming_info = self.view.choose_player(selectourna)
         matche= self.first_round(resuming_info)
         self.view.first_round(matche)
-        self.view.enter_result_match()
+        self.view.enter_result_match(matche)
         return resuming_info
 
 

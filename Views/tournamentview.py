@@ -65,6 +65,7 @@ class ViewResumingTournament:
         newlist = []
         for i in players:
             newlist.append(player_db.search((where('name') == i)))
+            print(newlist)
         return newlist
 
 
@@ -99,12 +100,11 @@ class ViewResumingTournament:
         for j in matches[1]:
             print(j)
         print(" > le troisième match opposera :")
-        for k in matches[2]:
-            print(k)
-        print(" > le quatrième match opposera :")
-        for m in matches[3]:
-            print(m)
+        #for k in matches[2]:
+         #   print(k)
+        #print(" > le quatrième match opposera :")
+        #for m in matches[3]:
+        #    print(m)
 
-    def enter_result_match(self, matches):
-        print("Veuillez entrer le résultat du match.")
-
+    def enter_result_match(self,matches):
+        print("Veuillez entrer le résultat du match. \n > le premier match :")
