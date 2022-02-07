@@ -62,11 +62,10 @@ class ViewResumingTournament:
             num += 1
         maj = Query()
         tournament_db.update({'assign_player': players}, maj.name == selectournament)
-        newlist = []
-        for i in players:
-            newlist.append(player_db.search((where('name') == i)))
-            print(newlist)
-        return newlist
+        #newlist = []
+        #for i in players:
+        #    newlist.append(player_db.search((where('name') == i)))
+        return players #newlist
 
 
     def create_player(self):
@@ -92,19 +91,21 @@ class ViewResumingTournament:
                   "(attention à l'orthographe) :\n-------")
             return self.assign_player()
 
-    def first_round(self, matches):
-        print("les rencontres du premier round sont les suivantes : \n > Le premier match opposera : ")
-        for i in matches[0]:
-            print(i)
-        print(" > le second match opposera :")
-        for j in matches[1]:
-            print(j)
-        print(" > le troisième match opposera :")
-        #for k in matches[2]:
-         #   print(k)
-        #print(" > le quatrième match opposera :")
-        #for m in matches[3]:
-        #    print(m)
+    def first_round(self, groups):
+        print("\n-------------------------------------------------------\n "
+              "les rencontres du premier round sont les suivantes : "
+              "\n-------------------------------------------------------")
+        for i in groups:
+            print(f'{i[0]}' " vs " f'{i[1]} \n***')
 
-    def enter_result_match(self,matches):
-        print("Veuillez entrer le résultat du match. \n > le premier match :")
+    def enter_result_match(self,groups):
+        print("\n---------------------------------------------------------------\n"
+              "Veuillez saisir les résultats des matchs de ce round :  "
+              "\n(gagant = 1 pt ; perdant = 0 pt ; match nul = 0,5 pt)"
+              "\n---------------------------------------------------------------")
+        for i in groups:
+            print("\nMatch " f'{i[0]}' " vs " f'{i[1]} : ')
+            score = input("saisir le score de " f'{i[0]} : '), input("saisir le score de " f'{i[1]} : ')
+            return score
+
+
