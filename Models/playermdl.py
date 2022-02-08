@@ -11,13 +11,13 @@ class Player:
                  first_name,
                  date_birth,
                  sexe,
-                 ranking):
+                 ranking, number_points=0):
         self.name = name
         self.first_name = first_name
         self.date_birth = date_birth
         self.sexe = sexe
         self.ranking = ranking
-        self.total_points = 0
+        self.number_points = number_points
 
     def serialized(player):
         serialized_player = {
@@ -25,7 +25,8 @@ class Player:
             'first_name': player.first_name,
             'date_birth': player.date_birth,
             'sexe': player.sexe,
-            'ranking': player.ranking
+            'ranking': player.ranking,
+            'number_points': player.number_points
         }
         return serialized_player
 
@@ -35,7 +36,8 @@ class Player:
             'first_name': player.first_name,
             'date_birth': player.date_birth,
             'sexe': player.sexe,
-            'ranking': player.ranking
+            'ranking': player.ranking,
+            'number_points': player.number_points
         }
 
         player_db.insert(serialized_player)

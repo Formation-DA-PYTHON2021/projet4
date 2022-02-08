@@ -21,16 +21,43 @@ class ControllerResumingTournament:
         resuming_info = self.view.choose_player(selectourna)
         groups = self.first_round(resuming_info)
         self.view.first_round(groups)
-        self.view.enter_result_match(groups)
+        points = self.view.enter_result_match(groups)
+        self.update_result_match(points)
+        #self.next_rounds(resuming_info)
+        #scores = self.view.enter_result_match(groups)
+        #self.update_result_match(groups, scores)
         return resuming_info
 
 
     def first_round(self, players):
         #print("player==============>", players)
         #players = sorted(players, key=lambda player: player.ranking)
-        middle = len(players) // 2
-        group1 = players[:middle]
-        group2 = players[middle:]
+        player = sorted(players, key=lambda x: x['ranking'])
+        #for verif in player:
+            #print(verif['ranking'])
+        #print(player)
+        #faire le trie sur le classement
+        middle = len(player) // 2
+        group1 = player[:middle]
+        group2 = player[middle:]
         matches = list(zip(group1, group2))
         return group1, group2
 
+    def next_rounds(self, players):
+        #print("player==============>", players)
+        # players = sorted(players, key=lambda player: player.ranking)
+        player = sorted(players, key=lambda x: x['number_points'])
+        # faire le trie sur le nbr de point si égale sur le ranking
+        middle = len(player) // 2
+        group1 = player[:middle]
+        group2 = player[middle:]
+        matches = list(zip(group1, group2))
+        return group1, group2
+
+    def update_result_match(self, points):
+        pass
+        #maj = Query()
+        # player_db.update({'number_points':i}, maj.name =='i')
+
+    def update_ranking(self):
+        pass

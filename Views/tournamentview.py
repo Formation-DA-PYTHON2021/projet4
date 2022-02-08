@@ -43,7 +43,14 @@ class ViewResumingTournament:
         for i in dispalytournament:
             print(i['name'])
         selectournament = str(input("Pour choisir un tournoi, rentrer son nom : "))
-        infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
+        if selectournament == i['name']:
+            infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
+        else:
+            print("\n-------------------ERREUR--------------------------\n"
+                "Veuillez saisir le bon nom de tournois \n"
+                "(attention à l'orthographe)"
+                "\n---------------------------------------------------\n")
+            return self.info()
         return selectournament
 
     def choose_player(self, selectournament):
@@ -58,14 +65,14 @@ class ViewResumingTournament:
                 players.append(self.assign_player())
             else:
                 print("Appuiez sur '1' ou '2' \n >> ")
-                return choose
+                return self.choose_player(selectournament)
             num += 1
         maj = Query()
         tournament_db.update({'assign_player': players}, maj.name == selectournament)
-        #newlist = []
-        #for i in players:
-        #    newlist.append(player_db.search((where('name') == i)))
-        return players #newlist
+        newlist = []
+        for i in players:
+            newlist.extend(player_db.search((where('name') == i)))
+        return newlist
 
 
     def create_player(self):
@@ -73,8 +80,8 @@ class ViewResumingTournament:
         first_name = input("Entrez le prénom : ")
         date_birth = input("Entrez la date de naissance (JJ/MM/AAA) : ")
         sexe = input("Entrez le sexe (F/M) : ")
-        ranking = input("Entrez le classement : ")
-        resuming_info = [name, first_name, date_birth, sexe, ranking]
+        ranking = int(input("Entrez le classement : "))
+        resuming_info = {name, first_name, date_birth, sexe, ranking}
         return resuming_info
 
     def assign_player(self):
@@ -87,8 +94,10 @@ class ViewResumingTournament:
         if assignplayer in player:
             return assignplayer
         else:
-            print("\n-------\nErreur de nom!\nVeuillez saisir le bon nom dans la liste ci-dessous "
-                  "(attention à l'orthographe) :\n-------")
+            print("\n-------------ERREUR-------------\n"
+                  "Veuillez saisir le bon nom"
+                  "(attention à l'orthographe)"
+                  "\n--------------------------------\n")
             return self.assign_player()
 
     def first_round(self, groups):
@@ -96,16 +105,33 @@ class ViewResumingTournament:
               "les rencontres du premier round sont les suivantes : "
               "\n-------------------------------------------------------")
         for i in groups:
-            print(f'{i[0]}' " vs " f'{i[1]} \n***')
+            print(f'{i[0]["name"]}' " vs " f'{i[1]["name"]} \n*************')
 
-    def enter_result_match(self,groups):
+    def next_round(self, groups):
+        print("\n-------------------------------------------------------\n "
+              "les rencontres du premier round sont les suivantes : "
+              "\n-------------------------------------------------------")
+        for i in groups:
+            print(f'{i[0]["name"]}' " vs " f'{i[1]["name"]} \n*************')
+
+    def enter_result_match(self, groups):
         print("\n---------------------------------------------------------------\n"
               "Veuillez saisir les résultats des matchs de ce round :  "
               "\n(gagant = 1 pt ; perdant = 0 pt ; match nul = 0,5 pt)"
               "\n---------------------------------------------------------------")
+        list_score_match = {}
         for i in groups:
-            print("\nMatch " f'{i[0]}' " vs " f'{i[1]} : ')
-            score = input("saisir le score de " f'{i[0]} : '), input("saisir le score de " f'{i[1]} : ')
-            return score
-
-
+            print("\nMatch " f'{i[0]["name"]}' " vs " f'{i[1]["name"]} : ')
+            score1 = input("saisir le score de " f'{i[0]["name"]} : ')
+            score2 = input("saisir le score de " f'{i[1]["name"]} : ')
+            list_score_match[f'{i[0]["name"]}'] = score1
+            list_score_match[f'{i[1]["name"]}'] = score2
+            if score1 <= "1":
+                continue
+            else:
+                print("\n-------------------ERREUR-------------------------\n"
+                      "le nombre de points se distribue ainsi : \n"
+                      "gagant = 1 pt ; perdant = 0 pt ; match nul = 0,5 pt \n"
+                      "-----------------------------------------------------")
+                return self.enter_result_match(groups)
+        return list_score_match
