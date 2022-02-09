@@ -1,5 +1,4 @@
 from ..Views.playerview import ViewPlayer
-from ..Views.tournamentview import ViewResumingTournament
 from ..Models.playermdl import Player
 
 

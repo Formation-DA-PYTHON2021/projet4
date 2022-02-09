@@ -1,4 +1,6 @@
 from tinydb import TinyDB, Query, where
+from ..Views.playerview import ViewPlayer
+from ..Models.playermdl import Player
 
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
@@ -76,13 +78,13 @@ class ViewResumingTournament:
 
 
     def create_player(self):
-        name = input("Entrez le nom : ")
-        first_name = input("Entrez le prénom : ")
-        date_birth = input("Entrez la date de naissance (JJ/MM/AAA) : ")
-        sexe = input("Entrez le sexe (F/M) : ")
-        ranking = int(input("Entrez le classement : "))
-        resuming_info = {name, first_name, date_birth, sexe, ranking}
-        return resuming_info
+        self.createplayer = ViewPlayer()
+        info_player = self.createplayer.info()
+        print(*info_player)
+        player2 = Player(*info_player)
+        Player.update(player2)
+        return info_player
+
 
     def assign_player(self):
         addplayer = player_db.all()
@@ -114,19 +116,35 @@ class ViewResumingTournament:
         for i in groups:
             print(f'{i[0]["name"]}' " vs " f'{i[1]["name"]} \n*************')
 
-    def enter_result_match(self, groups):
+    def enter_result_match(self, groups, selectournament):
         print("\n---------------------------------------------------------------\n"
               "Veuillez saisir les résultats des matchs de ce round :  "
               "\n(gagant = 1 pt ; perdant = 0 pt ; match nul = 0,5 pt)"
               "\n---------------------------------------------------------------")
         list_score_match = {}
+        maj = Query()
+
         for i in groups:
+            base1 = player_db.search((where('name') == f'{i[0]["name"]}'))
+            base2 = player_db.search((where('name') == f'{i[1]["name"]}'))
             print("\nMatch " f'{i[0]["name"]}' " vs " f'{i[1]["name"]} : ')
             score1 = input("saisir le score de " f'{i[0]["name"]} : ')
+            player_db.update({'number_points': score1}, maj.name == base1)
             score2 = input("saisir le score de " f'{i[1]["name"]} : ')
+            player_db.update({'number_points': score2}, maj.name == base2)
             list_score_match[f'{i[0]["name"]}'] = score1
             list_score_match[f'{i[1]["name"]}'] = score2
-            if score1 <= "1":
+            if score1 == '1':
+                continue
+            elif score1 == '0':
+                continue
+            elif score1 =='0.5':
+                continue
+            elif score2 == '1':
+                continue
+            elif score2 == '0':
+                continue
+            elif score2 =='0.5':
                 continue
             else:
                 print("\n-------------------ERREUR-------------------------\n"
@@ -135,3 +153,6 @@ class ViewResumingTournament:
                       "-----------------------------------------------------")
                 return self.enter_result_match(groups)
         return list_score_match
+
+    def update_result_match(self, points):
+        print(points)

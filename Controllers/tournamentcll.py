@@ -19,10 +19,10 @@ class ControllerResumingTournament:
     def __call__(self):
         selectourna = self.view.info()
         resuming_info = self.view.choose_player(selectourna)
-        groups = self.first_round(resuming_info)
-        self.view.first_round(groups)
-        points = self.view.enter_result_match(groups)
-        self.update_result_match(points)
+        #groups = self.first_round(resuming_info)
+        #self.view.first_round(groups)
+        #points = self.view.enter_result_match(groups, selectourna)
+        #self.view.update_result_match(points)
         #self.next_rounds(resuming_info)
         #scores = self.view.enter_result_match(groups)
         #self.update_result_match(groups, scores)
@@ -54,10 +54,7 @@ class ControllerResumingTournament:
         matches = list(zip(group1, group2))
         return group1, group2
 
-    def update_result_match(self, points):
-        pass
-        #maj = Query()
-        # player_db.update({'number_points':i}, maj.name =='i')
+
 
     def update_ranking(self):
         pass
