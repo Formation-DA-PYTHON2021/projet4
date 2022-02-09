@@ -71,9 +71,11 @@ class ViewResumingTournament:
             num += 1
         maj = Query()
         tournament_db.update({'assign_player': players}, maj.name == selectournament)
+        print(players)
         newlist = []
         for i in players:
             newlist.extend(player_db.search((where('name') == i)))
+        print(newlist)
         return newlist
 
 
@@ -83,7 +85,7 @@ class ViewResumingTournament:
         print(*info_player)
         player2 = Player(*info_player)
         Player.update(player2)
-        return info_player
+        return info_player[0]
 
 
     def assign_player(self):
@@ -103,6 +105,7 @@ class ViewResumingTournament:
             return self.assign_player()
 
     def first_round(self, groups):
+        print(groups)
         print("\n-------------------------------------------------------\n "
               "les rencontres du premier round sont les suivantes : "
               "\n-------------------------------------------------------")
@@ -116,22 +119,16 @@ class ViewResumingTournament:
         for i in groups:
             print(f'{i[0]["name"]}' " vs " f'{i[1]["name"]} \n*************')
 
-    def enter_result_match(self, groups, selectournament):
+    def enter_result_match(self, groups):
         print("\n---------------------------------------------------------------\n"
               "Veuillez saisir les résultats des matchs de ce round :  "
               "\n(gagant = 1 pt ; perdant = 0 pt ; match nul = 0,5 pt)"
               "\n---------------------------------------------------------------")
         list_score_match = {}
-        maj = Query()
-
         for i in groups:
-            base1 = player_db.search((where('name') == f'{i[0]["name"]}'))
-            base2 = player_db.search((where('name') == f'{i[1]["name"]}'))
             print("\nMatch " f'{i[0]["name"]}' " vs " f'{i[1]["name"]} : ')
             score1 = input("saisir le score de " f'{i[0]["name"]} : ')
-            player_db.update({'number_points': score1}, maj.name == base1)
             score2 = input("saisir le score de " f'{i[1]["name"]} : ')
-            player_db.update({'number_points': score2}, maj.name == base2)
             list_score_match[f'{i[0]["name"]}'] = score1
             list_score_match[f'{i[1]["name"]}'] = score2
             if score1 == '1':
