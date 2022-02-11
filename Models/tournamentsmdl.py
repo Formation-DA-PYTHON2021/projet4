@@ -58,7 +58,7 @@ class Tournament:
         tournament_db.update({'Id du tournois': tournament_id}, doc_ids=[tournament_id])
 
     def addMatch(self, match):
-        self.instances_match.append(match)
+        self.instances_match.append(match) # cf Views.tournamentview.first_round(self, first_matches):
 
     def __str__(self):
         return f"{self.name}, {self.site}"
@@ -69,8 +69,6 @@ class Round:
         self.name = name
         self.begin_time = begin_time
         self.end_time = end_time
-        self.list_score_matchs = list_score_matchs
-        self.instances_rounds = []
+        self.list_score_matchs = list_score_matchs # cf Views.tournamentview.enter_result_match(self, matches):
+        self.instances_rounds = [] #cf Views.tournamentview.view_round_results
 
-class Match:
-    pass

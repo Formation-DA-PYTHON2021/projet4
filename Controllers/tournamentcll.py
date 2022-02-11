@@ -19,42 +19,51 @@ class ControllerResumingTournament:
     def __call__(self):
         selectourna = self.view.info()
         resuming_info = self.view.choose_player(selectourna)
-        groups = self.first_round(resuming_info)
-        self.view.first_round(groups)
-        points = self.view.enter_result_match(groups)
-        self.view.update_result_match(points)
-        #self.next_rounds(resuming_info)
-        #scores = self.view.enter_result_match(groups)
-        #self.update_result_match(groups, scores)
-        return resuming_info
+        first_matches = self.first_round(resuming_info)
+        self.view.first_round(first_matches)
+        self.view.enter_result_match(first_matches)
+        next_matches = self.next_rounds(resuming_info)
+        self.view.next_round(next_matches)
+        self.view.enter_result_next_match(next_matches)
+        #self.update_ranking()
 
 
     def first_round(self, players):
-        #print("player==============>", players)
-        #players = sorted(players, key=lambda player: player.ranking)
+        '''premier tour, triez tous les joueurs en fonction de leur classement.
+        Divisez les joueurs en deux moitiés, une supérieure et une inférieure.
+        Le meilleur joueur de la moitié supérieure est jumelé avec le meilleur joueur de la moitié inférieure
+        ex:  joueur 2 est jumelé avec le joueur 6, etc.'''
         player = sorted(players, key=lambda x: x['ranking'])
-        #for verif in player:
-            #print(verif['ranking'])
-        #print(player)
-        #faire le trie sur le classement
         middle = len(player) // 2
         group1 = player[:middle]
         group2 = player[middle:]
         matches = list(zip(group1, group2))
-        return group1, group2
+        return matches
 
     def next_rounds(self, players):
-        #print("player==============>", players)
-        # players = sorted(players, key=lambda player: player.ranking)
-        player = sorted(players, key=lambda x: x['number_points'])
-        # faire le trie sur le nbr de point si égale sur le ranking
-        middle = len(player) // 2
-        group1 = player[:middle]
-        group2 = player[middle:]
-        matches = list(zip(group1, group2))
-        return group1, group2
+        '''faire le trie sur le nbr de point si égale sur le ranking
+        associé le j1 avec j2 ect si la rencontre à déjà eu lieu j1 avec j3 ...
+        '''
+        player = sorted(players, key=lambda x: x['number_points'] or ['ranking'])
+        print(player)
+        group1 = player[:2]
+        group2 = player[2:4]
+        group3 = player[4:6]
+        group4 = player[-2:]
+        matches = list(zip(group1, group2, group3, group4))
+        print('gr1 ', group1)
+        print('gr2 ', group2)
+        print('gr3 ', group3)
+        print('gr4 ', group4)
+        print(matches)
+        return matches
 
 
 
     def update_ranking(self):
+        ''' le gestionnaire devrait pouvoir modifier le classement d'un joueur à tout moment, et pas
+        seulement après un tournoi.'''
+        pass
+
+    def display_tournament_results(self):
         pass
