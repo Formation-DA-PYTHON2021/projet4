@@ -22,9 +22,13 @@ class ControllerResumingTournament:
         first_matches = self.first_round(resuming_info)
         self.view.first_round(first_matches)
         self.view.enter_result_match(first_matches)
-        next_matches = self.next_rounds(resuming_info)
-        self.view.next_round(next_matches)
-        self.view.enter_result_next_match(next_matches)
+        i = 0
+        while i < 3:
+            next_matches = self.next_rounds(resuming_info)
+            self.view.next_round(next_matches)
+            self.view.enter_result_next_match(next_matches)
+            i = i+1
+
         #self.update_ranking()
 
 
@@ -45,18 +49,12 @@ class ControllerResumingTournament:
         associé le j1 avec j2 ect si la rencontre à déjà eu lieu j1 avec j3 ...
         '''
         player = sorted(players, key=lambda x: x['number_points'] or ['ranking'])
-        print(player)
-        group1 = player[:2]
-        group2 = player[2:4]
-        group3 = player[4:6]
-        group4 = player[-2:]
-        matches = list(zip(group1, group2, group3, group4))
-        print('gr1 ', group1)
-        print('gr2 ', group2)
-        print('gr3 ', group3)
-        print('gr4 ', group4)
-        print(matches)
-        return matches
+        #group1 = player[:2]
+        #group2 = player[2:4]
+        #group3 = player[4:6]
+        #group4 = player[-2:]
+        #matches = list(zip(group1, group2, group3, group4))
+        return player
 
 
 
