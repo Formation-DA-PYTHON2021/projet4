@@ -21,16 +21,19 @@ class ControllerResumingTournament:
         selectourna = self.view.info()
         resuming_info = self.view.choose_player(selectourna)
         first_matches = self.first_round(resuming_info)
-        self.view.first_round(first_matches)
-        self.view.enter_result_match(first_matches)
+        list_first_matches = self.view.first_round(first_matches, selectourna)
+        list_score_first_matches = self.view.enter_result_match(first_matches)
+        self.view.view_first_round_results(list_score_first_matches)
         #i = 0
         #while i < 3:
-        next_matches = self.next_rounds(resuming_info)
-        self.view.next_round(next_matches)
-        self.view.enter_result_next_match(next_matches)
+        #next_matches = self.next_rounds(resuming_info)
+        #self.view.next_round(next_matches)
+        #self.view.enter_result_next_match(next_matches)
             #i = i+1
-
-        #self.update_ranking()
+        #self.view.update_ranking(resuming_info)
+        #self.view.view_next_round_results(next_matches)
+        #self.view.display_tournament_results(selectourna)
+        #self.display_tournament_results(first_matches, next_matches)
 
 
     def first_round(self, players):
@@ -43,7 +46,6 @@ class ControllerResumingTournament:
         group1 = player[:middle]
         group2 = player[middle:]
         matches = list(zip(group1, group2))
-        print('match_first_round : ', matches)
         return matches
 
     def next_rounds(self, players):
@@ -52,21 +54,15 @@ class ControllerResumingTournament:
         '''
         list = sorted(players, key=lambda x: x['number_points'])
         player = sorted(list, key=lambda x: x['ranking'])
-        #group1 = player[:2]
-        #group2 = player[2:4]
-        #group3 = player[4:6]
-        #group4 = player[-2:]
-        #matches = list(zip(group1, group2, group3, group4))
-        print('lis: ', players)
-        print('match_next_round : ', player)
         return player
 
 
 
-    def update_ranking(self):
+    def update_ranking(self, players):
         ''' le gestionnaire devrait pouvoir modifier le classement d'un joueur à tout moment, et pas
         seulement après un tournoi.'''
         pass
 
-    def display_tournament_results(self):
-        pass
+    def display_tournament_results(self, first_matches, next_matches):
+        self.view.view_first_round_results(first_matches)
+        self.view.view_next_round_results(next_matches)

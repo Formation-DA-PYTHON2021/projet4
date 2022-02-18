@@ -5,8 +5,9 @@ class ViewPlayer:
         name = input("Entrez le nom : ")
         first_name = input("Entrez le prénom : ")
         date_birth = input("Entrez la date de naissance (JJ/MM/AAAA) : ")
-        sexe = input("Entrez le sexe (F/M) : ")
+        genre = input("Entrez le sexe (F/M) : ")
         ranking = int(input("Entrez le classement : "))
+        player_played = []
         players_info = []
-        players_info.extend((name,first_name,date_birth,sexe,ranking))
+        players_info.extend((name,first_name,date_birth,genre,ranking, player_played))
         return players_info
