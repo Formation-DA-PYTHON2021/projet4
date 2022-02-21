@@ -2,7 +2,7 @@
 from ..Views.tournamentview import ViewTournament
 from ..Models.tournamentsmdl import Tournament
 from ..Views.tournamentview import ViewResumingTournament
-
+from operator import itemgetter
 
 class ControllerTournament:
     def __init__(self):
@@ -43,7 +43,6 @@ class ControllerResumingTournament:
         Divisez les joueurs en deux moitiés, une supérieure et une inférieure.
         Le meilleur joueur de la moitié supérieure est jumelé avec le meilleur joueur de la moitié inférieure
         ex:  joueur 2 est jumelé avec le joueur 6, etc.'''
-        #print('players in first round :', players)
         player = sorted(players, key=lambda x: x['ranking'])
         middle = len(player) // 2
         group1 = player[:middle]
@@ -53,52 +52,35 @@ class ControllerResumingTournament:
 
     def next_rounds(self, players):
         '''faire le trie sur le nbr de point si égale sur le ranking
-        associé le j1 avec j2 ect si la rencontre à déjà eu lieu j1 avec j3 ...
-        print('players in next round :',players)
-        list = sorted(players, key=lambda x: x['number_points'])
-        player = sorted(list, key=lambda x: x['ranking'])
-        group1 = player[0:2]
-        group2 = player[2:4]
-        group3 = player[4:6]
-        group4 = player[6:8]
-        return group1, group2, group3, group4'''
-        liste = sorted(players, key=lambda x: x['number_points'])
-        player = sorted(liste, key=lambda x: x['ranking'])
+        associé le j1 avec j2 ect si la rencontre à déjà eu lieu j1 avec j3 '''
+        player = sorted(players, key=itemgetter('ranking'))
+        playersort = sorted(players, key=itemgetter('number_points'), reverse=True)
         playeround = []
-        playeround.extend(player)
-        #print("first rounddddddd", playeround)  #
+        playeround.extend(playersort)
         groups = playeround[::2], playeround[1::2]
         matches = list(zip(groups[0], groups[1]))
-
-        availables = []
-        availables.extend(playeround)
-        #print("le testtt unique===", availables) #
+        dispo = []
+        dispo.extend(playeround)
 
         for item in range(len(matches)):
             (player_1, player_2) = matches[item]
-            availables.remove(player_1)
+            dispo.remove(player_1)
+            print('1/ les player engagé:', player_1, player_2)
 
             if player_2['name'] in player_1['player_played']:
-                possibles = [p for p in availables if p not in player_1['player_played']]
-
+                possibles = [p for p in dispo if p['name'] not in player_1['player_played']]
                 if not possibles:
-                    availables.remove(player_2)
-                    #print("not possiblesnot possiblesnot possibles")  #
+                    dispo.remove(player_2)
                 else:
-                    # print("possibles", possibles)
-                    fighter = next(iter(sorted(possibles)))
-                    # print("fighter===>", fighter)
+                    fighter = next(iter(possibles))
                     matches[item] = (player_1, fighter)
+                    dispo.remove(fighter)
 
-                    availables.remove(fighter)
-                    #print("availables remove fighter 1===", availables)  #
-                    groups2 = availables[::2], availables[1::2]
-
+                    groups2 = dispo[::2], dispo[1::2]
                     matches2 = list(zip(groups2[0], groups2[1]))
-                    #print("Matches Matches 2===", matches2)  #
                     matches[item + 1:] = matches2
-                    #print("possible Matches 3===", matches)  #
-        #print("matches====>", matches)
+            else:
+                dispo.remove(player_2)
         return matches
 
     def update_ranking(self, players):
