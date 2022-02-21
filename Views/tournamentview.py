@@ -59,7 +59,7 @@ class ViewResumingTournament:
     def choose_player(self, selectournament):
         players = []
         num = 1
-        while num <= 4:
+        while num <= 8:
             print("\n--------Ajouter le joueur n° "f'{num}'"-------------\n")
             choose = input("[1] Ajouter un nouveau joueur \n[2] Ajouter un joueur existant \n >> ")
             if choose == '1':
@@ -102,19 +102,28 @@ class ViewResumingTournament:
                   "\n--------------------------------\n")
             return self.assign_player()
 
-    def first_round(self, matches, selectournament):
+    def players_tournament(self):
+        addplayer = player_db.all()
+        players = []
+        for elm in addplayer:
+            players.append(elm['name'])
+        newlistupdate = []
+        for i in players:
+            newlistupdate.extend(player_db.search((where('name') == i)))
+        return newlistupdate
+
+
+    def display_round(self, matches, selectournament):
         print("\n-------------------------------------------------------\n "
               "les matches du round sont les suivantes : "
               "\n-------------------------------------------------------")
-        matches_first_round = []
+        matches_round = []
         for i in matches:
             maj = Query()
             print(f'{i[0]["name"]}' " vs " f'{i[1]["name"]} \n*************')
-            matches_first_round.append((f'{i[0]["name"]}', f'{i[1]["name"]}'))
-        tournament_db.update(add('instances_match', matches_first_round), maj.name == selectournament)
-        return matches_first_round
-
-
+            matches_round.append((f'{i[0]["name"]}', f'{i[1]["name"]}'))
+        tournament_db.update(add('instances_match', matches_round), maj.name == selectournament)
+        return matches_round
 
     def enter_result_match(self, matches):
         print("\n---------------------------------------------------------------\n"
@@ -122,7 +131,7 @@ class ViewResumingTournament:
               "\n(gagant = 1 pt ; perdant = 0 pt ; match nul = 0.5 pt)"
               "\n---------------------------------------------------------------")
         maj = Query()
-        list_score_first_match = []
+        list_score_match = []
         for i in matches:
             score_matchs = ()
             print("\nMatch " f'{i[0]["name"]}' " vs " f'{i[1]["name"]} : ')
@@ -133,7 +142,7 @@ class ViewResumingTournament:
             player_db.update(add('number_points', score2), maj.name == f'{i[1]["name"]}')
             player_db.update(add('player_played', [f'{i[0]["name"]}']), maj.name == f'{i[1]["name"]}')
             score_matchs = (f'{i[0]["name"]}', score1, f'{i[1]["name"]}', score2)
-            list_score_first_match.append(score_matchs)
+            list_score_match.append(score_matchs)
             if score1 == 1 and score2 == 0:
                 continue
             elif score1 == 0 and score2 == 1:
@@ -146,73 +155,13 @@ class ViewResumingTournament:
                       "gagant = 1 pt ; perdant = 0 pt ; match nul = 0.5 pt \n"
                       "-----------------------------------------------------")
                 return self.enter_result_match(matches)
-        return list_score_first_match
+        return list_score_match
 
-    def next_round(self, next_matches):
-        print("\n-------------------------------------------------------\n "
-              "les rencontres du round sont les suivantes : "
-              "\n-------------------------------------------------------")
-        print(next_matches[0]["name"], " vs ", next_matches[1]["name"], "\n*************")
-        print(next_matches[2]["name"], " vs ", next_matches[3]["name"], "\n*************")
-        print(next_matches[4]["name"], " vs ", next_matches[5]["name"], "\n*************")
-        print(next_matches[6]["name"], " vs ", next_matches[7]["name"], "\n*************")
-
-
-    def enter_result_next_match(self, next_matches):
-        print("\n---------------------------------------------------------------\n"
-              "Veuillez saisir les résultats des matchs de ce round :  "
-              "\n(gagant = 1 pt ; perdant = 0 pt ; match nul = 0.5 pt)"
-              "\n---------------------------------------------------------------")
-        maj = Query()
-        list_score_matchs = {}
-
-        print("\nMatch ", next_matches[0]["name"], " vs ", next_matches[1]["name"], " : ")
-        score = float(input("saisir le score de " f'{next_matches[0]["name"]}' " : "))
-        player_db.update(add('number_points', score), maj.name == f'{next_matches[0]["name"]}')
-        player_db.update(add('player_played', [f'{next_matches[1]["name"]}']), maj.name == f'{next_matches[0]["name"]}')
-        list_score_matchs[f'{next_matches[0]["name"]}'] = score
-        score = float(input("saisir le score de " f'{next_matches[1]["name"]}' " : "))
-        player_db.update(add('number_points', score), maj.name == f'{next_matches[1]["name"]}')
-        player_db.update(add('player_played', [f'{next_matches[0]["name"]}']), maj.name == f'{next_matches[1]["name"]}')
-        list_score_matchs[f'{next_matches[1]["name"]}'] = score
-
-        print("\nMatch ", next_matches[2]["name"], " vs ", next_matches[3]["name"], " : ")
-        score = float(input("saisir le score de " f'{next_matches[2]["name"]}' " : "))
-        player_db.update(add('number_points', score), maj.name == f'{next_matches[2]["name"]}')
-        player_db.update(add('player_played', [f'{next_matches[3]["name"]}']), maj.name == f'{next_matches[2]["name"]}')
-        list_score_matchs[f'{next_matches[2]["name"]}'] = score
-        score = float(input("saisir le score de " f'{next_matches[3]["name"]}' " : "))
-        player_db.update(add('number_points', score), maj.name == f'{next_matches[3]["name"]}')
-        player_db.update(add('player_played', [f'{next_matches[2]["name"]}']), maj.name == f'{next_matches[3]["name"]}')
-        list_score_matchs[f'{next_matches[3]["name"]}'] = score
-
-        print("\nMatch ", next_matches[4]["name"], " vs ", next_matches[5]["name"], " : ")
-        score = float(input("saisir le score de " f'{next_matches[4]["name"]}' " : "))
-        player_db.update(add('number_points', score), maj.name == f'{next_matches[4]["name"]}')
-        player_db.update(add('player_played', [f'{next_matches[5]["name"]}']), maj.name == f'{next_matches[4]["name"]}')
-        list_score_matchs[f'{next_matches[4]["name"]}'] = score
-        score = float(input("saisir le score de " f'{next_matches[5]["name"]}' " : "))
-        player_db.update(add('number_points', score), maj.name == f'{next_matches[5]["name"]}')
-        player_db.update(add('player_played', [f'{next_matches[4]["name"]}']), maj.name == f'{next_matches[5]["name"]}')
-        list_score_matchs[f'{next_matches[5]["name"]}'] = score
-
-        print("\nMatch ", next_matches[6]["name"], " vs ", next_matches[7]["name"], " : ")
-        score = float(input("saisir le score de " f'{next_matches[6]["name"]}' " : "))
-        player_db.update(add('number_points', score), maj.name == f'{next_matches[6]["name"]}')
-        player_db.update(add('player_played', [f'{next_matches[7]["name"]}']), maj.name == f'{next_matches[6]["name"]}')
-        list_score_matchs[f'{next_matches[6]["name"]}'] = score
-        score = float(input("saisir le score de " f'{next_matches[7]["name"]}' " : "))
-        player_db.update(add('number_points', score), maj.name == f'{next_matches[7]["name"]}')
-        player_db.update(add('player_played', [f'{next_matches[6]["name"]}']), maj.name == f'{next_matches[7]["name"]}')
-        list_score_matchs[f'{next_matches[7]["name"]}'] = score
-
-        return list_score_matchs
-
-    def view_first_round_results(self, list_score_first_matchs):
+    def view_round_results(self, list_score_matchs):
         print("\n---------------------\n"
               " Résultats des matches du round : "
               "\n---------------------")
-        for i in list_score_first_matchs:
+        for i in list_score_matchs:
             print("\n""Match : " f'{i[0]}' " vs " f'{i[2]}:')
             print(f'{i[0]}' ": "f'{i[1]}'" point")
             if i[1] == 1 :
@@ -228,30 +177,9 @@ class ViewResumingTournament:
                 print('-> perdant')
             elif i[3] == 0.5:
                 print("match nul")
+        return 'fin de match'
 
-
-       
-
-
-
-    def view_next_round_results(self, next_matches):
-        print("Résultats du round : ")
-        print(next_matches[0]["name"], " vs ", next_matches[1]["name"], " : ")
-        print("=> ", next_matches[0]["name"], " : ",next_matches[0]["number_points"], " - ",
-              next_matches[1]["name"], " : ", next_matches[1]["number_points"], "\n")
-
-        print(next_matches[2]["name"], " vs ", next_matches[3]["name"], " : ")
-        print("=> ", next_matches[2]["name"], " : ", next_matches[2]["number_points"], " - ",
-              next_matches[3]["name"], " : ", next_matches[3]["number_points"])
-
-        print(next_matches[4]["name"], " vs ", next_matches[5]["name"], " : ")
-        print("=> ", next_matches[4]["name"], " : ", next_matches[4]["number_points"], " - ",
-              next_matches[5]["name"], " : ", next_matches[5]["number_points"])
-
-        print(next_matches[6]["name"], " vs ", next_matches[7]["name"], " : ")
-        print("=> ", next_matches[6]["name"], " : ", next_matches[6]["number_points"], " - ",
-              next_matches[7]["name"], " : ", next_matches[7]["number_points"])
-
+    '''
     def display_tournament_results(self, selectouna):
         info_name = selectouna["name"]
         info_end_date = selectouna["end_date"]
@@ -259,7 +187,7 @@ class ViewResumingTournament:
         print(" --------------------------"
               "TOURNOIS ",info_name,"\n",
               info_start_date, " / ", info_end_date, "\n"
-              "---------------------------")
+              "---------------------------")'''
 
 #Nouveau classement à l'issu du tournois :
 #    playerD : 1
