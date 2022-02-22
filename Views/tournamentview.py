@@ -2,6 +2,7 @@ from tinydb import TinyDB, Query, where
 from tinydb.operations import add
 from ..Views.playerview import ViewPlayer
 from ..Models.playermdl import Player
+from operator import itemgetter
 
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
@@ -12,11 +13,11 @@ class ViewTournament:
         print("-------------------------------------------------\n"
               "                 Créer un tournois               \n"
               "-------------------------------------------------\n")
-        name = input("Entrez le nom du tournoi : ")
-        name_site = input("Entrez le lieu du tournoi : ")
-        start_date = input("Entrez la date de début du tournois (JJ/MM/AAAA) : ")
-        end_date = input("Entrez la date de fin du tournois (JJ/MM/AAAA): ")
-        description_tournament = input("Description du tournois : ")
+        name = input("Entrez le nom du tournoi : \n => ")
+        name_site = input("Entrez le lieu du tournoi : \n => ")
+        start_date = input("Entrez la date de début du tournois (JJ/MM/AAAA) : \n => ")
+        end_date = input("Entrez la date de fin du tournois (JJ/MM/AAAA): \n => ")
+        description_tournament = input("Description du tournois : \n => ")
         choose_time = self.choose_time()
         assign_players = []
         tournaments_info = []
@@ -25,7 +26,7 @@ class ViewTournament:
         return tournaments_info
 
     def choose_time(self):
-        choosetime = int(input("Entrez le contrôle du temps : [1] Bullet , [2] Blitz, [3] Coup rapide : "))
+        choosetime = int(input("Entrez le contrôle du temps : [1] Bullet , [2] Blitz, [3] Coup rapide : \n => "))
         if choosetime == 1:
             return "Bullet"
         elif choosetime == 2:
@@ -33,7 +34,7 @@ class ViewTournament:
         elif choosetime == 3:
             return "Coup rapide"
         else:
-            print("Vous devez entrer le numéro de votre choix.")
+            print("Vous devez entrer le numéro de votre choix. \n => ")
             return self.choose_time()
 
 
@@ -45,7 +46,7 @@ class ViewResumingTournament:
         dispalytournament = tournament_db.all()
         for i in dispalytournament:
             print(i['name'])
-        selectournament = str(input("Pour choisir un tournoi, rentrer son nom : "))
+        selectournament = str(input("Pour choisir un tournoi, rentrer son nom : \n => "))
         if selectournament == i['name']:
             infoselecttournament = tournament_db.search(where('name') == selectournament)[0]
         else:
@@ -61,13 +62,13 @@ class ViewResumingTournament:
         num = 1
         while num <= 8:
             print("\n--------Ajouter le joueur n° "f'{num}'"-------------\n")
-            choose = input("[1] Ajouter un nouveau joueur \n[2] Ajouter un joueur existant \n >> ")
+            choose = input("[1] Ajouter un nouveau joueur \n[2] Ajouter un joueur existant \n => ")
             if choose == '1':
                 players.append(self.create_player())
             elif choose == '2':
                 players.append(self.assign_player())
             else:
-                print("Appuiez sur '1' ou '2' \n >> ")
+                print("Appuiez sur '1' ou '2' \n => ")
                 return self.choose_player(selectournament)
             num += 1
         maj = Query()
@@ -92,7 +93,7 @@ class ViewResumingTournament:
         for elm in addplayer:
             print(elm['name'])
             player.append(elm['name'])
-        assignplayer = str(input("Assigner un joueur au tournoi. Rentrer son nom : "))
+        assignplayer = str(input("Assigner un joueur au tournoi. Rentrer son nom : \n => "))
         if assignplayer in player:
             return assignplayer
         else:
@@ -179,22 +180,72 @@ class ViewResumingTournament:
                 print("match nul")
         return 'fin de match'
 
-    '''
-    def display_tournament_results(self, selectouna):
-        info_name = selectouna["name"]
-        info_end_date = selectouna["end_date"]
-        info_start_date = selectouna["start_date"]
-        print(" --------------------------"
-              "TOURNOIS ",info_name,"\n",
-              info_start_date, " / ", info_end_date, "\n"
-              "---------------------------")'''
 
-#Nouveau classement à l'issu du tournois :
-#    playerD : 1
-#    playerF : 2
-#    playerA : 3
-#    playerE : 4
-#    playerB : 5
-#    playerC : 6
-#    playerG : 7
-#    playerH : 8
+    def display_tournament_results(self, selectouna, players):
+        print("-------------------------------------------------\n"
+              "             Résultat du tournois               \n"
+              "-------------------------------------------------\n")
+        tourna = []
+        tourna.extend(tournament_db.search((where('name') == selectouna)))
+        for elm in tourna:
+            name = elm['name']
+            site = elm['site']
+            date1 = elm['start_date']
+            date2 = elm['end_date']
+
+        print("-------------------------\n"
+              "      TOURNOIS :\n"
+              ,name," à ",site,"\n",
+              date1, " / ", date2, "\n"
+              "---------------------------")
+        playersort = sorted(players, key=itemgetter('number_points'), reverse=True)
+        print('le joueur à obtenir le plus grand nombre de point\n'
+              ' remportera le tournois \n'
+              '----------------------------')
+        for i in playersort:
+            print(i['name'], 'nombre de point : ', i['number_points'])
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'
+              'le vainqueur du tournois est : ', playersort[0]['name'],
+              '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+
+    def update_ranking(self):
+        ''' le gestionnaire devrait pouvoir modifier le classement d'un joueur à tout moment, et pas
+                seulement après un tournoi.'''
+        print("-------------------------------------------------\n"
+              "           Mise à jour du classement             \n"
+              "-------------------------------------------------\n")
+        players = player_db.all()
+        player = []
+        maj = Query()
+        update_ranking = input("---------- Voulez-vous mettre à jour le classement des joueurs ? ----------\n"
+                               "[1] oui / [2] non\n=> ")
+        for i in update_ranking:
+            if i == '1':
+                for elm in players:
+                    print(elm['name'])
+                    player.append(elm['name'])
+                chooseplayer = str(input("\n---------- Choisir un joueur ----------\n"
+                                 "Rentrez son nom =>  "))
+                if chooseplayer in player:
+                    newranking = int(input("\n---------- Rentrez son nouveau numéro de classement : ----------\n  => "))
+                    safenewranking= str(input("\n---------- Veuillez confirmer votre choix : ----------\n "
+                                            "nouveau classement : joueur: "f'{chooseplayer}'" - classement : "f'{newranking}'" ?\n"
+                                            " [1] oui / [2] non\n => "))
+                    if safenewranking == '1':
+                        player_db.update({'ranking': newranking}, maj.name == chooseplayer)
+                        print("le classement est mis à jour")
+                        newranking = str(input("\n---------- Voulez-vous affichier le nouveau classement ? ----------\n"
+                                    "[1] oui / [2] non\n => "))
+                        if newranking == '1':
+                            print("Nouveau classement à l'issu du tournois :")
+                            playersort = sorted(player_db, key=itemgetter('ranking'))
+                            for elm in playersort:
+                                print(elm['name'], ": ", elm['ranking'])
+                        else:
+                            return self.update_ranking()
+                    else:
+                            print("annulation de la demande de modification du classement du joueur")
+                            return self.update_ranking()
+            else:
+                print("Le classement n'a pas été mis à jour")

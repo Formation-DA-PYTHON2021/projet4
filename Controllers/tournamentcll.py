@@ -33,10 +33,9 @@ class ControllerResumingTournament:
             list_score_next_matches = self.view.enter_result_match(next_matches)
             self.view.view_round_results(list_score_next_matches)
             i = i + 1
-        # self.view.update_ranking(resuming_info)
-        # self.view.view_next_round_results(next_matches)
-        # self.view.display_tournament_results(selectourna)
-        # self.display_tournament_results(first_matches, next_matches)
+        players = self.view.players_tournament()
+        self.view.display_tournament_results(selectourna, players)
+        self.view.update_ranking()
 
     def first_round(self, players):
         '''premier tour, triez tous les joueurs en fonction de leur classement.
@@ -61,12 +60,9 @@ class ControllerResumingTournament:
         matches = list(zip(groups[0], groups[1]))
         dispo = []
         dispo.extend(playeround)
-
         for item in range(len(matches)):
             (player_1, player_2) = matches[item]
             dispo.remove(player_1)
-            print('1/ les player engagé:', player_1, player_2)
-
             if player_2['name'] in player_1['player_played']:
                 possibles = [p for p in dispo if p['name'] not in player_1['player_played']]
                 if not possibles:
@@ -75,19 +71,9 @@ class ControllerResumingTournament:
                     fighter = next(iter(possibles))
                     matches[item] = (player_1, fighter)
                     dispo.remove(fighter)
-
                     groups2 = dispo[::2], dispo[1::2]
                     matches2 = list(zip(groups2[0], groups2[1]))
                     matches[item + 1:] = matches2
             else:
                 dispo.remove(player_2)
         return matches
-
-    def update_ranking(self, players):
-        ''' le gestionnaire devrait pouvoir modifier le classement d'un joueur à tout moment, et pas
-        seulement après un tournoi.'''
-        pass
-
-    def display_tournament_results(self, first_matches, next_matches):
-        self.view.view_round_results(first_matches)
-        self.view.view_next_round_results(next_matches)
