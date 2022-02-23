@@ -4,10 +4,10 @@ db = TinyDB("./mvc/db.json")
 tournament_db = db.table('tournament_db')
 
 
-
 class Tournament:
     def __init__(self, name, site, start_date, end_date,
-                 description_tournament, choose_time, assign_player, number_round=4, isend=False):
+                 description_tournament, choose_time, assign_player,
+                 instances_rounds, number_round=4):
         self.name = name
         self.site = site
         self.start_date = start_date
@@ -15,11 +15,9 @@ class Tournament:
         self.description_tournament = description_tournament
         self.choose_time = choose_time
         self.assign_player = assign_player
+        self.instances_rounds = instances_rounds
         self.number_round = number_round
-        self.isend = isend
-        self.instances_rounds = []
-        self.instances_match = []
-        self.instance_players = []
+
 
     def serialized(tournament):
         serialized_tournament = {
@@ -30,8 +28,8 @@ class Tournament:
             'description_tournament': tournament.description_tournament,
             'choose_time': tournament.choose_time,
             'assign_player': tournament.assign_player,
-            'number_round': tournament.number_round,
-            'isend': tournament.isend
+            'instances_rounds': tournament.instances_rounds,
+            'number_round': tournament.number_round
         }
         return serialized_tournament
 
@@ -44,12 +42,10 @@ class Tournament:
             'description_tournament': tournament.description_tournament,
             'choose_time': tournament.choose_time,
             'assign_player': tournament.assign_player,
-            'number_round': tournament.number_round,
-            'isend': tournament.isend
+            'instances_rounds': tournament.instances_rounds,
+            'number_round': tournament.number_round
         }
-
         tournament_db.insert(serialized_tournament)
-
         print(db)
 
 
@@ -57,18 +53,7 @@ class Tournament:
         tournament_id = tournament_db.insert(tournament.serialized())
         tournament_db.update({'Id du tournois': tournament_id}, doc_ids=[tournament_id])
 
-    def addMatch(self, match):
-        self.instances_match.append(match) # cf Views.tournamentview.first_round(self, first_matches):
-
     def __str__(self):
         return f"{self.name}, {self.site}"
 
-class Round:
-    def __init__(self, name=None, begin_time=None, end_time=None,
-                     list_score_matchs=None):
-        self.name = name
-        self.begin_time = begin_time
-        self.end_time = end_time
-        self.list_score_matchs = list_score_matchs # cf Views.tournamentview.enter_result_match(self, matches):
-        self.instances_rounds = [] #cf Views.tournamentview.view_round_results
 
