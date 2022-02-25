@@ -45,7 +45,7 @@ class ControllerResumingTournament:
         self.save_inst_round(inst_first_round, selectourna)
         i = 2
         while i < 5:
-            players = self.players_tournament(selectourna)
+            players = self.view.players_tournament(selectourna)
             next_matchs = self.next_rounds(players)
             self.view.display_round(next_matchs)
             begin_time_next = self.dateandtime()
@@ -58,8 +58,9 @@ class ControllerResumingTournament:
             self.save_inst_round(inst_next_round, selectourna)
             i = i + 1
         self.endtourna(self.dateandtime(), selectourna)
-        players = self.players_tournament(selectourna)
-        self.view.display_tournament_results(selectourna, players)
+        players1 = self.view.players_tournament(selectourna)
+        tourna = tournament_db.search((where('name') == selectourna))[0]
+        self.view.display_tournament_results(tourna, players1)
         self.view.update_ranking()
 
     def starttourna(self, now, selectourna):
@@ -107,20 +108,6 @@ class ControllerResumingTournament:
                 dispo.remove(player_2)
         return matches
 
-    def players_tournament(self, selectourna):
-        tournament = tournament_db.all()
-        namealltourna = []
-        listourna = []
-        newlistupdate = []
-        for elm in tournament:
-            namealltourna.append(elm['name'])
-        if selectourna in namealltourna:
-            listourna = tournament_db.search(where('name') == selectourna)[0]
-        players_tourna = listourna['assign_player']
-        for i in players_tourna:
-            newlistupdate.extend(player_db.search((where('name') == i)))
-        return newlistupdate
-
     def dateandtime(self):
         now = str(datetime.now())
         return now
@@ -141,7 +128,6 @@ class ControllerReport:
     def __init__(self):
         self.view = ViewReport()
         self.viewresuming = ViewResumingTournament()
-        self.cll = ControllerResumingTournament()
 
     def __call__(self):
         choicemenu = self.view.menu_report()
@@ -169,10 +155,11 @@ class ControllerReport:
                 instance_round = listourna['instances_rounds']
                 lists_score_matchs = instance_round[3::4]
                 infotourna = self.view.menuinfotourna(listourna)
-                players = self.cll.players_tournament(selectourna)
+                players = self.viewresuming.players_tournament(selectourna)
                 for p in infotourna:
                     if p == '1': #Liste info round d'un tournoi
-                        self.viewresuming.display_tournament_results(selectourna, players)
+                        tourna = tournament_db.search((where('name') == selectourna))[0]
+                        self.viewresuming.display_tournament_results(tourna, players)
                     elif p == '2': # ensemble des matchs du tournoi
                         x = 0
                         for elm in lists_score_matchs:

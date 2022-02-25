@@ -111,6 +111,20 @@ class ViewResumingTournament:
             return self.assign_player()
 
 
+    def players_tournament(self, selectourna):
+        tournament = tournament_db.all()
+        namealltourna = []
+        listourna = []
+        newlistupdate = []
+        for elm in tournament:
+            namealltourna.append(elm['name'])
+        if selectourna in namealltourna:
+            listourna = tournament_db.search(where('name') == selectourna)[0]
+        players_tourna = listourna['assign_player']
+        for i in players_tourna:
+            newlistupdate.extend(player_db.search((where('name') == i)))
+        return newlistupdate
+
     def display_round(self, matches):
         print("\n-------------------------------------------------------\n "
               "les matches du round sont les suivantes : "
@@ -119,7 +133,6 @@ class ViewResumingTournament:
             print(f'{i[0]["name"]}' " vs " f'{i[1]["name"]}\n'
                   ">> le joueur "f'{i[0]["name"]}' " aura les pions blanc, le joueur "f'{i[1]["name"]}'
                   " les pions noir \n*************")
-
 
     def enter_result_match(self, matches):
         print("\n---------------------------------------------------------------\n"
@@ -169,8 +182,7 @@ class ViewResumingTournament:
             elif i[1] == 0.5:
                 print("match nul")
 
-    def display_tournament_results(self, selectourna, players):
-        tourna = tournament_db.search((where('name') == selectourna))[0]
+    def display_tournament_results(self, tourna, players):
         inst_round = tourna.get('instances_rounds')
         match_round = inst_round[3::4]
         print("--------------------------------------------------\n"
@@ -278,8 +290,8 @@ class ViewReport:
     def choicesorting(self, liste):
         choicesorting = input("---------- choix du trie : ----------\n"
                             "[1] par ordre alphabetique\n"
-                            "[2] par classement \n "
-                            "[3] retour au menu Raport \n=> ")
+                            "[2] par classement\n"
+                            "[3] retour au menu Raport\n=>")
         for m in choicesorting:
             if m == '1':
                 print("---------- par ordre alphabetique : ----------\n")
