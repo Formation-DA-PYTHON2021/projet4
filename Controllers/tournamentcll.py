@@ -3,6 +3,7 @@ from datetime import datetime
 from tinydb import TinyDB, Query, where
 from tinydb.operations import add
 
+
 from ..Views.tournamentview import ViewTournament
 from ..Models.tournamentsmdl import Tournament
 from ..Views.tournamentview import ViewResumingTournament
@@ -28,30 +29,42 @@ class ControllerResumingTournament:
         self.view = ViewResumingTournament()
 
     def __call__(self):
-        selectourna = self.view.info()
-        resuming_info = self.view.choose_player(selectourna)
-        first_matches = self.first_round(resuming_info)
-        self.view.display_round(first_matches)
-        begin_time = self.dateandtime()
-        list_score_first_matches = self.view.enter_result_match(first_matches)
-        end_time = self.dateandtime()
-        self.view.view_round_results(list_score_first_matches)
-        inst_first_round = self.inst_round(list_score_first_matches, begin_time, end_time)
+        self.view.menu()
+        selectourna = self.view.selectourna()
+        chooseplayers = self.view.choose_player(selectourna)
+        self.starttourna(self.dateandtime(), selectourna)
+        first_matchs = self.first_round(chooseplayers)
+        self.view.display_round(first_matchs)
+        begin_time_first = self.dateandtime()
+        list_score_first_matchs = self.view.enter_result_match(first_matchs)
+        end_time_first = self.dateandtime()
+        round_first_matchs = ("1")
+        self.view.view_round_number(round_first_matchs)
+        self.view.view_matchs_results(list_score_first_matchs)
+        inst_first_round = self.inst_round(round_first_matchs, begin_time_first, end_time_first,list_score_first_matchs)
         self.save_inst_round(inst_first_round, selectourna)
-        i = 0
-        while i < 3:
-            players = self.view.players_tournament()
-            next_matches = self.next_rounds(players)
-            self.view.display_round(next_matches)
-            self.save_inst_round(next_matches, selectourna)
-            list_score_next_matches = self.view.enter_result_match(next_matches)
-            self.view.view_round_results(list_score_next_matches)
-            inst_next_round = self.inst_round(list_score_next_matches, begin_time, end_time)
+        i = 2
+        while i < 5:
+            players = self.players_tournament(selectourna)
+            next_matchs = self.next_rounds(players)
+            self.view.display_round(next_matchs)
+            begin_time_next = self.dateandtime()
+            list_score_next_matchs = self.view.enter_result_match(next_matchs)
+            end_time_next = self.dateandtime()
+            round_next_matchs = (f'{i}')
+            self.view.view_round_number(round_next_matchs)
+            self.view.view_matchs_results(list_score_next_matchs)
+            inst_next_round = self.inst_round(round_next_matchs, begin_time_next, end_time_next, list_score_next_matchs)
             self.save_inst_round(inst_next_round, selectourna)
             i = i + 1
-        players = self.view.players_tournament()
+        self.endtourna(self.dateandtime(), selectourna)
+        players = self.players_tournament(selectourna)
         self.view.display_tournament_results(selectourna, players)
         self.view.update_ranking()
+
+    def starttourna(self, now, selectourna):
+        maj = Query()
+        tournament_db.update(add('start_date', now), maj.name == selectourna)
 
     def first_round(self, players):
         '''premier tour, triez tous les joueurs en fonction de leur classement.
@@ -94,44 +107,80 @@ class ControllerResumingTournament:
                 dispo.remove(player_2)
         return matches
 
+    def players_tournament(self, selectourna):
+        tournament = tournament_db.all()
+        namealltourna = []
+        listourna = []
+        newlistupdate = []
+        for elm in tournament:
+            namealltourna.append(elm['name'])
+        if selectourna in namealltourna:
+            listourna = tournament_db.search(where('name') == selectourna)[0]
+        players_tourna = listourna['assign_player']
+        for i in players_tourna:
+            newlistupdate.extend(player_db.search((where('name') == i)))
+        return newlistupdate
+
     def dateandtime(self):
         now = str(datetime.now())
         return now
 
-    def inst_round(self, list_scor_match, begin_time, end_time):
-        name = 'nameround'
-        inst_round = (name, begin_time, end_time, list_scor_match)
+    def inst_round(self, numround, begin_time, end_time, list_scor_match):
+        inst_round = (f'round n°{numround}', begin_time, end_time, list_scor_match)
         return inst_round
 
     def save_inst_round(self, inst_round, selectourna):
         maj = Query()
         tournament_db.update(add('instances_rounds', inst_round), maj.name == selectourna)
 
+    def endtourna(self, now, selectourna):
+        maj = Query()
+        tournament_db.update(add('end_date', now), maj.name == selectourna)
 
 class ControllerReport:
     def __init__(self):
         self.view = ViewReport()
         self.viewresuming = ViewResumingTournament()
+        self.cll = ControllerResumingTournament()
 
     def __call__(self):
         choicemenu = self.view.menu_report()
         for i in choicemenu:
-            if i == '1':  # acteur
+            if i == '1':  # acteurs
                 players = self.view.players()
                 self.view.choicesorting(players)
-            elif i == '2':  # joueur pour un tournoi
-                playerstourna = self.view.choicetourna()
-                print(f"---------- liste des joueurs du tournoi f'{playerstourna['name']}: ----------\n")
+                return self.view.menu_report()
+            elif i == '2':  # joueurs pour un tournoi
+                selectourna = self.view.choicetourna()
+                print(f"---------- liste des joueurs du tournoi {selectourna['name']}: ----------\n")
+                assignplayerstourna = []
+                assignplayerstourna.extend(selectourna['assign_player'])
+                playerstourna = []
+                for i in assignplayerstourna:
+                    playerstourna.extend(player_db.search(where('name') == i))
                 self.view.choicesorting(playerstourna)
-            elif i == '3':  # round/match pour un tournoi
+                return self.view.menu_report()
+            elif i == '3': #liste de tous les tournois
+                self.view.displayTourna()
+                return self.view.menu_report()
+            elif i == '4':  # issus des match pour un tournoi
                 listourna = self.view.choicetourna()
+                selectourna = listourna['name']
+                instance_round = listourna['instances_rounds']
+                lists_score_matchs = instance_round[3::4]
                 infotourna = self.view.menuinfotourna(listourna)
+                players = self.cll.players_tournament(selectourna)
                 for p in infotourna:
-                    if p == '1':
-                        pass
-                    elif p in infotourna:
-                        return self.viewresuming.view_round_results(listourna)
+                    if p == '1': #Liste info round d'un tournoi
+                        self.viewresuming.display_tournament_results(selectourna, players)
+                    elif p == '2': # ensemble des matchs du tournoi
+                        x = 0
+                        for elm in lists_score_matchs:
+                            x += 1
+                            self.viewresuming.view_round_number(x)
+                            self.viewresuming.view_matchs_results(elm)
                     else:
                         return self.view.menu_report()
+                return self.view.menu_report()
             else:
                 return self.view.menu_report()
