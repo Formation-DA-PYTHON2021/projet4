@@ -29,7 +29,6 @@ class ControllerResumingTournament:
         self.view = ViewResumingTournament()
 
     def __call__(self):
-        self.view.menu()
         selectourna = self.view.selectourna()
         chooseplayers = self.view.choose_player(selectourna)
         self.starttourna(self.dateandtime(), selectourna)
@@ -41,7 +40,8 @@ class ControllerResumingTournament:
         round_first_matchs = ("1")
         self.view.view_round_number(round_first_matchs)
         self.view.view_matchs_results(list_score_first_matchs)
-        inst_first_round = self.inst_round(round_first_matchs, begin_time_first, end_time_first,list_score_first_matchs)
+        inst_first_round = self.inst_round(round_first_matchs, begin_time_first,
+                                           end_time_first, list_score_first_matchs)
         self.save_inst_round(inst_first_round, selectourna)
         i = 2
         while i < 5:
@@ -54,7 +54,8 @@ class ControllerResumingTournament:
             round_next_matchs = (f'{i}')
             self.view.view_round_number(round_next_matchs)
             self.view.view_matchs_results(list_score_next_matchs)
-            inst_next_round = self.inst_round(round_next_matchs, begin_time_next, end_time_next, list_score_next_matchs)
+            inst_next_round = self.inst_round(round_next_matchs, begin_time_next,
+                                              end_time_next, list_score_next_matchs)
             self.save_inst_round(inst_next_round, selectourna)
             i = i + 1
         self.endtourna(self.dateandtime(), selectourna)
@@ -82,7 +83,7 @@ class ControllerResumingTournament:
     def next_rounds(self, players):
         '''faire le trie sur le nbr de point si égale sur le ranking
         associé le j1 avec j2 ect si la rencontre à déjà eu lieu j1 avec j3 '''
-        player = sorted(players, key=itemgetter('ranking'))
+        sorted(players, key=itemgetter('ranking'))
         playersort = sorted(players, key=itemgetter('number_points'), reverse=True)
         playeround = []
         playeround.extend(playersort)
@@ -124,6 +125,7 @@ class ControllerResumingTournament:
         maj = Query()
         tournament_db.update(add('end_date', now), maj.name == selectourna)
 
+
 class ControllerReport:
     def __init__(self):
         self.view = ViewReport()
@@ -146,10 +148,10 @@ class ControllerReport:
                     playerstourna.extend(player_db.search(where('name') == i))
                 self.view.choicesorting(playerstourna)
                 return self.view.menu_report()
-            elif i == '3': #liste de tous les tournois
+            elif i == '3':
                 self.view.displayTourna()
                 return self.view.menu_report()
-            elif i == '4':  # issus des match pour un tournoi
+            elif i == '4':
                 listourna = self.view.choicetourna()
                 selectourna = listourna['name']
                 instance_round = listourna['instances_rounds']
@@ -157,10 +159,10 @@ class ControllerReport:
                 infotourna = self.view.menuinfotourna(listourna)
                 players = self.viewresuming.players_tournament(selectourna)
                 for p in infotourna:
-                    if p == '1': #Liste info round d'un tournoi
+                    if p == '1':
                         tourna = tournament_db.search((where('name') == selectourna))[0]
                         self.viewresuming.display_tournament_results(tourna, players)
-                    elif p == '2': # ensemble des matchs du tournoi
+                    elif p == '2':
                         x = 0
                         for elm in lists_score_matchs:
                             x += 1

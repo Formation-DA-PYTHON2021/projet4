@@ -39,6 +39,7 @@ class TournamentMenuController:
     def __call__(self):
         return ControllerTournament()
 
+
 class ResumingTournamentMenuController:
     def __call__(self):
         return ControllerResumingTournament()
@@ -48,8 +49,7 @@ class ReportMenuController:
     def __call__(self):
         return ControllerReport()
 
+
 class EndScreenMenuController:
     def __call__(self):
         sys.exit()
-
-

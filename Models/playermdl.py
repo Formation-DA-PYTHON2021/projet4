@@ -1,8 +1,7 @@
-from tinydb import TinyDB, Query, where
+from tinydb import TinyDB
 
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
-
 
 
 class Player:
@@ -44,14 +43,9 @@ class Player:
 
         print(db)
 
-
-
     def update(player):
-        #name = db.search(where('name') == player.name)
         player_id = player_db.insert(player.serialized())
         player_db.update({'Id du joueur': player_id}, doc_ids=[player_id])
 
     def __str__(self):
         return f"{self.name} {self.first_name} {self.date_birth} {self.genre} {self.ranking}"
-
-
