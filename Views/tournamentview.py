@@ -1,4 +1,3 @@
-
 from tinydb import TinyDB, Query, where
 from tinydb.operations import add
 from ..Views.playerview import ViewPlayer
@@ -8,6 +7,7 @@ from operator import itemgetter
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
 tournament_db = db.table('tournament_db')
+
 
 class ViewTournament:
     def info(self):
@@ -23,10 +23,10 @@ class ViewTournament:
         assign_players = []
         instances_rounds = []
         tournaments_info = []
-        tournaments_info.extend((name, name_site, start_date, end_date,description_tournament,
-                                 choose_time, assign_players, instances_rounds))
+        tournaments_info.extend((name, name_site, start_date, end_date,
+                                 description_tournament, choose_time,
+                                 assign_players, instances_rounds))
         return tournaments_info
-
 
     def choose_time(self):
         choosetime = int(input("Entrez le contrôle du temps : [1] Bullet , [2] Blitz, [3] Coup rapide : \n => "))
@@ -46,6 +46,7 @@ class ViewResumingTournament:
         print("-------------------------------------------------\n"
               "             Continuer un tournois               \n"
               "-------------------------------------------------\n")
+
     def selectourna(self):
         dispalytournament = tournament_db.all()
         nametourna = []
@@ -56,12 +57,12 @@ class ViewResumingTournament:
         selectournament = str(input("Pour séléctionner un tournoi, rentrer son nom : \n => "))
         if selectournament in nametourna:
             return selectournament
+
         else:
-            print("\n------------- ERREUR -------------\n"
-            "Veuillez saisir le bon nom"
-            " (attention à l'orthographe)"
-            "\n--------------------------------\n")
+            print("\n------------- ERREUR -------------\nVeuillez saisir le bon nom (attention à l'orthographe)"
+                  "\n--------------------------------\n")
             return self.selectourna()
+
         return selectournament
 
     def choose_player(self, selectournament):
@@ -84,7 +85,6 @@ class ViewResumingTournament:
         for i in players:
             newlist.extend(player_db.search((where('name') == i)))
         return newlist
-
 
     def create_player(self):
         self.createplayer = ViewPlayer()
@@ -109,7 +109,6 @@ class ViewResumingTournament:
                   "(attention à l'orthographe)"
                   "\n--------------------------------\n")
             return self.assign_player()
-
 
     def players_tournament(self, selectourna):
         tournament = tournament_db.all()
@@ -170,6 +169,7 @@ class ViewResumingTournament:
         print("\n---------------------\n"
               f" Résultats des matchs du round n°{round_number} : "
               "\n---------------------")
+
     def view_matchs_results(self, list_score_matchs):
         x = 0
         for i in list_score_matchs:
@@ -183,17 +183,19 @@ class ViewResumingTournament:
                 print("match nul")
 
     def display_tournament_results(self, tourna, players):
+        print('toruna : ', tourna)
         inst_round = tourna.get('instances_rounds')
+        print(inst_round)
         match_round = inst_round[3::4]
+        print('match :', match_round)
+
         print("--------------------------------------------------\n"
               "                 TOURNOIS :\n"
-            f"               {tourna.get('name')} à {tourna.get('site')}\n"
-            f"      du : {tourna.get('start_date')}\n"
-            f"      au : {tourna.get('end_date')}\n"
-            f"description : {tourna.get('description_tournament')}\n"  
+              f"               {tourna.get('name')} à {tourna.get('site')}\n"
+              f"      du : {tourna.get('start_date')}\n      au : {tourna.get('end_date')}\n"
+              f"description : {tourna.get('description_tournament')}\n"
               "--------------------------------------------------\n")
         print("---------- information sur les rounds : ----------")
-
         print(f"\nle {inst_round[0]} a débuté le : {inst_round[1]} et fini le : {inst_round[2]}\n"
               f"les rencontres pour ce round sont les suivantes :")
         for i in match_round[0]:
@@ -226,7 +228,6 @@ class ViewResumingTournament:
               '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
         return tourna
 
-
     def update_ranking(self):
         ''' le gestionnaire devrait pouvoir modifier le classement d'un joueur à tout moment, et pas
                 seulement après un tournoi.'''
@@ -243,19 +244,28 @@ class ViewResumingTournament:
                 for elm in players:
                     print(elm['name'])
                     player.append(elm['name'])
+
                 chooseplayer = str(input("\n---------- Choisir un joueur ----------\n"
-                                 "Rentrez son nom =>  "))
+                                         "Rentrez son nom =>  "))
+
                 if chooseplayer in player:
-                    newranking = int(input("\n---------- Rentrez son nouveau numéro de classement : ----------\n  => "))
-                    safenewranking= str(input("\n---------- Veuillez confirmer votre choix : ----------\n "
-                                            "nouveau classement : joueur: "f'{chooseplayer}'" - classement : "f'{newranking}'" ?\n"
-                                            " [1] oui / [2] non\n => "))
+                    newranking = int(input("\n---------- Rentrez son nouveau numéro de classement : "
+                                           "----------\n  => "))
+                    safenewranking = str(input("\n---------- Veuillez confirmer votre choix :"
+                                               " ----------\n "
+                                               "nouveau classement : joueur: "f'{chooseplayer}'" "
+                                               "- classement : "f'{newranking}'" ?\n"
+                                               " [1] oui / [2] non\n => "))
+
                     if safenewranking == '1':
                         player_db.update({'ranking': newranking}, maj.name == chooseplayer)
                         print("le classement est mis à jour")
-                        newranking = str(input("\n---------- Voulez-vous affichier le nouveau classement ? ----------\n"
-                                    "[1] oui / [2] non\n => "))
+                        newranking = str(input("\n---------- Voulez-vous affichier le nouveau classement ?"
+                                               " ----------\n"
+                                               "[1] oui / [2] non\n => "))
+
                         if newranking == '1':
+
                             print("Nouveau classement à l'issu du tournois :")
                             playersort = sorted(player_db, key=itemgetter('ranking'))
                             for elm in playersort:
@@ -263,35 +273,38 @@ class ViewResumingTournament:
                         else:
                             return self.update_ranking()
                     else:
-                            print("annulation de la demande de modification du classement du joueur")
-                            return self.update_ranking()
+                        print("annulation de la demande de modification du classement du joueur")
+                        return self.update_ranking()
+
             else:
                 print("Le classement n'a pas été mis à jour")
 
 
 class ViewReport:
     def menu_report(self):
+
         print("-------------------------------------------------\n"
               "              Rapport du tournois                 \n"
               "-------------------------------------------------\n")
 
         menureport = str(input("---------- Menu  ----------\n"
-                        "[1] Voir la liste de tous les acteurs\n"
-                        "[2] Voir la liste de tous les joueurs d'un tournois \n"
-                        "[3] Voir la liste des tournois \n"
-                        "[4] Voir les rounds et les matchs pour un tournois \n=> "))
+                               "[1] Voir la liste de tous les acteurs\n"
+                               "[2] Voir la liste de tous les joueurs d'un tournois \n"
+                               "[3] Voir la liste des tournois \n"
+                               "[4] Voir les rounds et les matchs pour un tournois \n=> "))
         return menureport
 
     def players(self):
+
         print("---------- liste des acteurs : ----------\n")
         players = player_db.all()
         return players
 
     def choicesorting(self, liste):
         choicesorting = input("---------- choix du trie : ----------\n"
-                            "[1] par ordre alphabetique\n"
-                            "[2] par classement\n"
-                            "[3] retour au menu Raport\n=>")
+                              "[1] par ordre alphabetique\n"
+                              "[2] par classement\n"
+                              "[3] retour au menu Raport\n=>")
         for m in choicesorting:
             if m == '1':
                 print("---------- par ordre alphabetique : ----------\n")
@@ -321,19 +334,18 @@ class ViewReport:
             return listourna
         else:
             print("\n-------------ERREUR-------------\n"
-                      "Veuillez saisir le bon nom"
-                      " (attention à l'orthographe)"
-                      "\n--------------------------------\n")
+                  "Veuillez saisir le bon nom"
+                  " (attention à l'orthographe)"
+                  "\n--------------------------------\n")
             return self.choicetourna()
         return listourna
 
     def menuinfotourna(self, listourna):
         infotourna = str(input(f"---------- Voir les informations pour le tournois  {listourna['name']}: ----------\n"
-                      "[1] liste des informations concernant les rounds du tounois\n"
-                      "[2] issues des matchs du tournois \n"
-                      "[3] retour au menu Rapport \n=> "))
+                               "[1] liste des informations concernant les rounds du tounois\n"
+                               "[2] issues des matchs du tournois \n"
+                               "[3] retour au menu Rapport \n=> "))
         return infotourna
-
 
     def displayTourna(self):
         tournament = tournament_db.all()
@@ -341,9 +353,3 @@ class ViewReport:
         for elm in tournament:
             print(elm['name'])
             nametourna.append(elm['name'])
-
-
-
-
-
-

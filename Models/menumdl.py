@@ -1,4 +1,3 @@
-
 class MenuEntry:
 
     def __init__(self, option, handler):
@@ -10,6 +9,7 @@ class MenuEntry:
 
     def __str__(self):
         return str(self.option)
+
 
 class Menu:
     def __init__(self):
@@ -31,5 +31,3 @@ class Menu:
 
     def __getitem__(self, choice):
         return self._entries[choice]
-
-

@@ -18,7 +18,6 @@ class Tournament:
         self.instances_rounds = instances_rounds
         self.number_round = number_round
 
-
     def serialized(tournament):
         serialized_tournament = {
             'name': tournament.name,
@@ -48,12 +47,9 @@ class Tournament:
         tournament_db.insert(serialized_tournament)
         print(db)
 
-
     def update(tournament):
         tournament_id = tournament_db.insert(tournament.serialized())
         tournament_db.update({'Id du tournois': tournament_id}, doc_ids=[tournament_id])
 
     def __str__(self):
         return f"{self.name}, {self.site}"
-
-
