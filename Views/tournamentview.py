@@ -10,6 +10,7 @@ from ..Controllers import tournamentcll
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
 tournament_db = db.table('tournament_db')
+maj = Query()
 
 
 class ViewTournament:
@@ -25,10 +26,11 @@ class ViewTournament:
         choose_time = self.choose_time()
         assign_players = []
         instances_rounds = []
+        playerdb_tourna = []
         tournaments_info = []
         tournaments_info.extend((name, name_site, start_date, end_date,
                                  description_tournament, choose_time,
-                                 assign_players, instances_rounds))
+                                 assign_players, instances_rounds, playerdb_tourna))
         return tournaments_info
 
     def choose_time(self):
@@ -65,7 +67,6 @@ class ViewResumingTournament:
             print("\n------------- ERREUR -------------\nVeuillez saisir le bon nom (attention à l'orthographe)"
                   "\n--------------------------------\n")
             return self.selectourna()
-
         return selectournament
 
     def choose_player(self, selectournament):
@@ -101,7 +102,7 @@ class ViewResumingTournament:
         addplayer = player_db.all()
         player = []
         for elm in addplayer:
-            print(elm['name'])
+            print(elm['name'], elm['first_name'])
             player.append(elm['name'])
         assignplayer = str(input("Assigner un joueur au tournoi. Rentrer son nom : \n => "))
         if assignplayer in player:
@@ -113,46 +114,45 @@ class ViewResumingTournament:
                   "\n--------------------------------\n")
             return self.assign_player()
 
-    def players_tournament(self, selectourna):
-        tournament = tournament_db.all()
-        namealltourna = []
-        listourna = []
+    def players_name_tournament(self, playertourna):
+        nameplayertourna = []
+        for elm in playertourna:
+            nameplayertourna.append(elm['name'])
+        return nameplayertourna
+
+    def update_players_tourna(self, playernametourna):
         newlistupdate = []
-        for elm in tournament:
-            namealltourna.append(elm['name'])
-        if selectourna in namealltourna:
-            listourna = tournament_db.search(where('name') == selectourna)[0]
-        players_tourna = listourna['assign_player']
-        for i in players_tourna:
+        for i in playernametourna:
             newlistupdate.extend(player_db.search((where('name') == i)))
         return newlistupdate
 
     def display_round(self, matches):
         print("\n-------------------------------------------------------\n "
-              "les matches du round sont les suivantes : "
+              "les matchs du round sont les suivantes : "
               "\n-------------------------------------------------------")
         for i in matches:
-            print(f'{i[0]["name"]}' " vs " f'{i[1]["name"]}\n'
-                  ">> le joueur "f'{i[0]["name"]}' " aura les pions blanc, le joueur "f'{i[1]["name"]}'
-                  " les pions noir \n*************")
+            print(f'{i[0]["name"]} ' f'{i[0]["first_name"]}' " vs " f'{i[1]["name"]} ' f'{i[1]["first_name"]}\n'
+                  ">> le joueur "f'{i[0]["name"]} ' f'{i[0]["first_name"]}' " aura les pions blanc, "
+                  "le joueur "f'{i[1]["name"]} ' f'{i[1]["first_name"]}' " les pions noir. \n*************")
 
     def enter_result_match(self, matches):
         print("\n---------------------------------------------------------------\n"
               "Veuillez saisir les résultats des matchs de ce round :  "
               "\n(gagant = 1 pt ; perdant = 0 pt ; match nul = 0.5 pt)"
               "\n---------------------------------------------------------------")
-        maj = Query()
         list_score_match = []
         for i in matches:
             score_matchs = ()
-            print("\nMatch " f'{i[0]["name"]}' " vs " f'{i[1]["name"]} : ')
-            score1 = float(input("saisir le score de " f'{i[0]["name"]} : '))
-            score2 = float(input("saisir le score de " f'{i[1]["name"]} : '))
+            print("\nMatch " f'{i[0]["name"]} {i[0]["first_name"]}' " vs " f'{i[1]["name"]} {i[1]["first_name"]}: ')
+            score1 = float(input("saisir le score de " f'{i[0]["name"]} {i[0]["first_name"]} : '))
+            score2 = float(input("saisir le score de " f'{i[1]["name"]} {i[1]["first_name"]} : '))
             player_db.update(add('number_points', score1), maj.name == f'{i[0]["name"]}')
             player_db.update(add('player_played', [f'{i[1]["name"]}']), maj.name == f'{i[0]["name"]}')
             player_db.update(add('number_points', score2), maj.name == f'{i[1]["name"]}')
             player_db.update(add('player_played', [f'{i[0]["name"]}']), maj.name == f'{i[1]["name"]}')
-            score_matchs = (f'{i[0]["name"]}', score1, f'{i[1]["name"]}', score2, f'{score1} - {score2}')
+            score_matchs = (f'{i[0]["name"]}', f'{i[0]["first_name"]}', score1,
+                            f'{i[1]["name"]}', f'{i[1]["first_name"]}', score2,
+                            f'{score1} - {score2}')
             list_score_match.append(score_matchs)
             if score1 == 1 and score2 == 0:
                 continue
@@ -169,25 +169,27 @@ class ViewResumingTournament:
         return list_score_match
 
     def view_round_number(self, round_number):
-        print("\n---------------------\n"
+        print("\n------------------------------------\n"
               f" Résultats des matchs du round n°{round_number} : "
-              "\n---------------------")
+              "\n------------------------------------")
 
     def view_matchs_results(self, list_score_matchs):
         x = 0
         for i in list_score_matchs:
             x += 1
-            print(f"\nMatch n°{x} : {i[0]} VS {i[2]}: {i[4]}")
+            print(f"\nMatch n°{x} : {i[0]} {i[1]} VS {i[3]} {i[4]} : {i[6]}")
             if i[1] == 1:
-                print(f'Le vainqueur du match est : {i[0]}')
+                print(f'Le vainqueur du match est : {i[0]} {i[1]}')
             elif i[3] == 1:
-                print(f'Le vainqueur du match est : {i[2]}')
+                print(f'Le vainqueur du match est : {i[3]} {i[4]}')
             elif i[1] == 0.5:
                 print("match nul")
 
-    def display_tournament_results(self, tourna, players):
+    def display_tournament_results(self, tourna):
         inst_round = tourna.get('instances_rounds')
         match_round = inst_round[3::4]
+        print("match_round dans display : ", match_round)
+        print("match_round[0] dans display : ", match_round[0])
         print("--------------------------------------------------\n"
               "                 TOURNOIS :\n"
               f"               {tourna.get('name')} à {tourna.get('site')}\n"
@@ -198,34 +200,34 @@ class ViewResumingTournament:
         print(f"\nle {inst_round[0]} a débuté le : {inst_round[1]} et fini le : {inst_round[2]}\n"
               f"les rencontres pour ce round sont les suivantes :")
         for i in match_round[0]:
-            print(f'{i[0]} VS {i[2]}, score : {i[4]}')
+            print(f'{i[0]} {i[1]} VS {i[3]} {i[4]}, score : {i[6]}')
 
-        print(f"\nle {inst_round[4]} a débuté le :{inst_round[5]} et fini le {inst_round[6]}\n"
+        print(f"\nle {inst_round[4]} a débuté le : {inst_round[5]} et fini le : {inst_round[6]}\n"
               f"les rencontres pour ce round sont les suivantes :")
         for i in match_round[1]:
-            print(f'{i[0]} VS {i[2]}, score : {i[4]}')
+            print(f'{i[0]} {i[1]} VS {i[3]} {i[4]}, score : {i[6]}')
 
-        print(f"\nle {inst_round[8]} a débuté le :{inst_round[9]} et fini le {inst_round[10]}\n"
+        print(f"\nle {inst_round[8]} a débuté le : {inst_round[9]} et fini le : {inst_round[10]}\n"
               f"les rencontres pour ce round sont les suivantes :")
         for i in match_round[2]:
-            print(f'{i[0]} VS {i[2]}, score : {i[4]}')
+            print(f'{i[0]} {i[1]} VS {i[3]} {i[4]}, score : {i[6]}')
 
-        print(f"\nle {inst_round[12]} a débuté le :{inst_round[13]} et fini le {inst_round[14]}\n"
+        print(f"\nle {inst_round[12]} a débuté le : {inst_round[13]} et fini le : {inst_round[14]}\n"
               f"les rencontres pour ce round sont les suivantes :")
         for i in match_round[3]:
-            print(f'{i[0]} VS {i[2]}, score : {i[4]}')
+            print(f'{i[0]} {i[1]} VS {i[3]} {i[4]}, score : {i[6]}')
 
+    def display_playerdb_tourna(self, players):
         playersort = sorted(players, key=itemgetter('number_points'), reverse=True)
         print('\n--------------------------------------\n'
               'le joueur à obtenir le plus grand \n'
               'nombre de point remporte le tournois \n'
               '--------------------------------------')
         for i in playersort:
-            print(i['name'], 'nombre de point : ', i['number_points'])
+            print(i['name'], i['first_name'], 'nombre de point : ', i['number_points'])
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'
-              'le vainqueur du tournois est : ', playersort[0]['name'],
+              'le vainqueur du tournois est : ', playersort[0]['name'], playersort[0]['first_name'],
               '\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-        return tourna
 
     def update_ranking(self):
         ''' le gestionnaire devrait pouvoir modifier le classement d'un joueur à tout moment, et pas
@@ -235,13 +237,12 @@ class ViewResumingTournament:
               "-------------------------------------------------\n")
         players = player_db.all()
         player = []
-        maj = Query()
         update_ranking = input("---------- Voulez-vous mettre à jour le classement des joueurs ? ----------\n"
                                "[1] oui / [2] non\n=> ")
         for i in update_ranking:
             if i == '1':
                 for elm in players:
-                    print(elm['name'])
+                    print(elm['name'], elm['first_name'])
                     player.append(elm['name'])
 
                 chooseplayer = str(input("\n---------- Choisir un joueur ----------\n"
@@ -268,7 +269,7 @@ class ViewResumingTournament:
                             print("Nouveau classement à l'issu du tournois :")
                             playersort = sorted(player_db, key=itemgetter('ranking'))
                             for elm in playersort:
-                                print(elm['name'], ": ", elm['ranking'])
+                                print(elm['name'], elm['first_name'], ": ", elm['ranking'])
                         else:
                             return self.update_ranking()
                     else:
@@ -308,12 +309,14 @@ class ViewReport:
             if m == '1':
                 print("---------- par ordre alphabetique : ----------\n")
                 sortalpha = sorted(liste, key=itemgetter('name'))
-                print(sortalpha)
+                for elm in sortalpha:
+                    print(elm['name'], elm['first_name'], ' classement :', elm['ranking'])
                 return self.choicesorting(liste)
             elif m == '2':
                 print("---------- par classement : ----------\n")
                 sortrank = sorted(liste, key=itemgetter('ranking'))
-                print(sortrank)
+                for elm in sortrank:
+                    print(elm['name'], elm['first_name'], ' classement :', elm['ranking'])
                 return self.choicesorting(liste)
             elif m == '3':
                 return self.cll()

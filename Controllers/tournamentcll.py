@@ -13,6 +13,7 @@ from ..Controllers import menucll
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
 tournament_db = db.table('tournament_db')
+maj = Query()
 
 
 class ControllerTournament:
@@ -49,7 +50,8 @@ class ControllerResumingTournament:
         self.save_inst_round(inst_first_round, selectourna)
         i = 2
         while i < 5:
-            players = self.view.players_tournament(selectourna)
+            nameplayerstourna = self.view.players_name_tournament(chooseplayers)
+            players = self.view.update_players_tourna(nameplayerstourna)
             next_matchs = self.next_rounds(players)
             self.view.display_round(next_matchs)
             begin_time_next = self.dateandtime()
@@ -63,14 +65,17 @@ class ControllerResumingTournament:
             self.save_inst_round(inst_next_round, selectourna)
             i = i + 1
         self.endtourna(self.dateandtime(), selectourna)
-        players1 = self.view.players_tournament(selectourna)
+        nameplayerstourna = self.view.players_name_tournament(chooseplayers)
+        players1 = self.view.update_players_tourna(nameplayerstourna)
         tourna = tournament_db.search((where('name') == selectourna))[0]
-        self.view.display_tournament_results(tourna, players1)
+        self.view.display_tournament_results(tourna)
+        self.view.display_playerdb_tourna(players1)
+        self.save_playerdb_tourna(players1, selectourna)
         self.view.update_ranking()
+        self.cleanupplayer(nameplayerstourna)
         return self.menugene()
 
     def starttourna(self, now, selectourna):
-        maj = Query()
         tournament_db.update(add('start_date', now), maj.name == selectourna)
 
     def first_round(self, players):
@@ -123,12 +128,19 @@ class ControllerResumingTournament:
         return inst_round
 
     def save_inst_round(self, inst_round, selectourna):
-        maj = Query()
         tournament_db.update(add('instances_rounds', inst_round), maj.name == selectourna)
 
     def endtourna(self, now, selectourna):
-        maj = Query()
         tournament_db.update(add('end_date', now), maj.name == selectourna)
+
+    def cleanupplayer(self, nameplayer):
+        for elm in nameplayer:
+            player_db.update({'number_points': 0}, maj.name == elm)
+            player_db.update({'player_played': []}, maj.name == elm)
+
+    def save_playerdb_tourna(self, players, selectourna):
+        tournament_db.update(add('playerdb_tourna', players), maj.name == selectourna)
+        return players
 
 
 class ControllerReport:
@@ -163,11 +175,13 @@ class ControllerReport:
                 instance_round = listourna['instances_rounds']
                 lists_score_matchs = instance_round[3::4]
                 infotourna = self.view.menuinfotourna(listourna)
-                players = self.viewresuming.players_tournament(selectourna)
+                players = listourna['playerdb_tourna']
                 for p in infotourna:
+                    """menu : 1=> info rounds, 2 => issues matchs """
                     if p == '1':
                         tourna = tournament_db.search((where('name') == selectourna))[0]
-                        self.viewresuming.display_tournament_results(tourna, players)
+                        self.viewresuming.display_tournament_results(tourna)
+                        self.viewresuming.display_playerdb_tourna(players)
                         return self.__call__()
                     elif p == '2':
                         x = 0
@@ -178,6 +192,5 @@ class ControllerReport:
                         return self.__call__()
                     else:
                         self.__call__()
-                return self.__call__()
             else:
                 return self.menugene
