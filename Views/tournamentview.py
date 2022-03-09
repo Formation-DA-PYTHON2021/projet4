@@ -1,8 +1,11 @@
+from operator import itemgetter
+
 from tinydb import TinyDB, Query, where
 from tinydb.operations import add
-from ..Views.playerview import ViewPlayer
+
 from ..Models.playermdl import Player
-from operator import itemgetter
+from ..Views.playerview import ViewPlayer
+from ..Controllers import tournamentcll
 
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
@@ -183,12 +186,8 @@ class ViewResumingTournament:
                 print("match nul")
 
     def display_tournament_results(self, tourna, players):
-        print('toruna : ', tourna)
         inst_round = tourna.get('instances_rounds')
-        print(inst_round)
         match_round = inst_round[3::4]
-        print('match :', match_round)
-
         print("--------------------------------------------------\n"
               "                 TOURNOIS :\n"
               f"               {tourna.get('name')} à {tourna.get('site')}\n"
@@ -282,25 +281,25 @@ class ViewResumingTournament:
 
 class ViewReport:
     def menu_report(self):
-
         print("-------------------------------------------------\n"
-              "              Rapport du tournois                 \n"
-              "-------------------------------------------------\n")
-
-        menureport = str(input("---------- Menu  ----------\n"
-                               "[1] Voir la liste de tous les acteurs\n"
-                               "[2] Voir la liste de tous les joueurs d'un tournois \n"
-                               "[3] Voir la liste des tournois \n"
-                               "[4] Voir les rounds et les matchs pour un tournois \n=> "))
+              "                  Menu Rapport                 \n"
+              "-------------------------------------------------\n"
+              "---------- Menu  ----------\n"
+              "[1] Voir la liste de tous les acteurs\n"
+              "[2] Voir la liste de tous les joueurs d'un tournois \n"
+              "[3] Voir la liste des tournois \n"
+              "[4] Voir les rounds et les matchs pour un tournois \n"
+              "[5] Retour au menu général")
+        menureport = input("Entrez votre choix : ")
         return menureport
 
     def players(self):
-
         print("---------- liste des acteurs : ----------\n")
         players = player_db.all()
         return players
 
     def choicesorting(self, liste):
+        self.cll = tournamentcll.ControllerReport()
         choicesorting = input("---------- choix du trie : ----------\n"
                               "[1] par ordre alphabetique\n"
                               "[2] par classement\n"
@@ -317,17 +316,18 @@ class ViewReport:
                 print(sortrank)
                 return self.choicesorting(liste)
             elif m == '3':
-                return self.menu_report()
+                return self.cll()
             else:
                 return self.choicesorting(liste)
 
     def choicetourna(self):
         tournament = tournament_db.all()
         nametourna = []
-        print('les tournois disponible : ')
+        print('\nles tournois disponible : ')
         for elm in tournament:
             print(elm['name'])
             nametourna.append(elm['name'])
+        print()
         selectourna = str(input("---------- choix du tournoi : ----------\nRentrez son nom : \n=> "))
         if selectourna in nametourna:
             listourna = tournament_db.search(where('name') == selectourna)[0]
@@ -341,7 +341,8 @@ class ViewReport:
         return listourna
 
     def menuinfotourna(self, listourna):
-        infotourna = str(input(f"---------- Voir les informations pour le tournois  {listourna['name']}: ----------\n"
+        infotourna = str(input(f"\n---------- Voir les informations pour le tournois  {listourna['name']}:"
+                               f" ----------\n"
                                "[1] liste des informations concernant les rounds du tounois\n"
                                "[2] issues des matchs du tournois \n"
                                "[3] retour au menu Rapport \n=> "))
@@ -350,6 +351,8 @@ class ViewReport:
     def displayTourna(self):
         tournament = tournament_db.all()
         nametourna = []
+        print('\nLa liste des tournois : ')
         for elm in tournament:
             print(elm['name'])
             nametourna.append(elm['name'])
+        print('\nretour au menu\n')

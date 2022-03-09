@@ -1,13 +1,14 @@
 from operator import itemgetter
 from datetime import datetime
+
 from tinydb import TinyDB, Query, where
 from tinydb.operations import add
-
 
 from ..Views.tournamentview import ViewTournament
 from ..Models.tournamentsmdl import Tournament
 from ..Views.tournamentview import ViewResumingTournament
 from ..Views.tournamentview import ViewReport
+from ..Controllers import menucll
 
 db = TinyDB("./mvc/db.json")
 player_db = db.table('player_db')
@@ -17,16 +18,19 @@ tournament_db = db.table('tournament_db')
 class ControllerTournament:
     def __init__(self):
         self.view = ViewTournament()
+        self.menugene = menucll.HomeMenuController
 
     def __call__(self):
         tournaments_info = self.view.info()
         tourmament1 = Tournament(*tournaments_info)
-        return Tournament.update(tourmament1)
+        Tournament.update(tourmament1)
+        return self.menugene()
 
 
 class ControllerResumingTournament:
     def __init__(self):
         self.view = ViewResumingTournament()
+        self.menugene = menucll.HomeMenuController
 
     def __call__(self):
         selectourna = self.view.selectourna()
@@ -63,6 +67,7 @@ class ControllerResumingTournament:
         tourna = tournament_db.search((where('name') == selectourna))[0]
         self.view.display_tournament_results(tourna, players1)
         self.view.update_ranking()
+        return self.menugene()
 
     def starttourna(self, now, selectourna):
         maj = Query()
@@ -130,27 +135,28 @@ class ControllerReport:
     def __init__(self):
         self.view = ViewReport()
         self.viewresuming = ViewResumingTournament()
+        self.menugene = menucll.HomeMenuController()
 
     def __call__(self):
+        """ menu : 1 => liste acteurs , 2 => liste joueur, 3 => liste des tournoi
+         4 => les rounds et matchs d'un tournoi, 5 => retour menu général """
         choicemenu = self.view.menu_report()
         for i in choicemenu:
-            if i == '1':  # acteurs
+            if i == '1':
                 players = self.view.players()
                 self.view.choicesorting(players)
-                return self.view.menu_report()
-            elif i == '2':  # joueurs pour un tournoi
+            elif i == '2':
                 selectourna = self.view.choicetourna()
                 print(f"---------- liste des joueurs du tournoi {selectourna['name']}: ----------\n")
                 assignplayerstourna = []
                 assignplayerstourna.extend(selectourna['assign_player'])
                 playerstourna = []
-                for i in assignplayerstourna:
-                    playerstourna.extend(player_db.search(where('name') == i))
+                for elm in assignplayerstourna:
+                    playerstourna.extend(player_db.search(where('name') == elm))
                 self.view.choicesorting(playerstourna)
-                return self.view.menu_report()
             elif i == '3':
                 self.view.displayTourna()
-                return self.view.menu_report()
+                return self.__call__()
             elif i == '4':
                 listourna = self.view.choicetourna()
                 selectourna = listourna['name']
@@ -162,14 +168,16 @@ class ControllerReport:
                     if p == '1':
                         tourna = tournament_db.search((where('name') == selectourna))[0]
                         self.viewresuming.display_tournament_results(tourna, players)
+                        return self.__call__()
                     elif p == '2':
                         x = 0
                         for elm in lists_score_matchs:
                             x += 1
                             self.viewresuming.view_round_number(x)
                             self.viewresuming.view_matchs_results(elm)
+                        return self.__call__()
                     else:
-                        return self.view.menu_report()
-                return self.view.menu_report()
+                        self.__call__()
+                return self.__call__()
             else:
-                return self.view.menu_report()
+                return self.menugene
