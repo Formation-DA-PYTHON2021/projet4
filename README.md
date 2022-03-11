@@ -45,7 +45,7 @@ Pour lancer le programme inscrivez dans la console : ```python -m mvc.Controller
 
 #### Génération Rapport Flake8 :
 
-Après avoir activé l'environnement virtuel, entrez la commande: ```flake8 --format=html --htmldir=flake_rapport```
+Après avoir activé l'environnement virtuel, entrez la commande: ```flake8 --format=html --htmldir=flake_rapport --max-line-length 119```
 
 Un rapport sera généré dans le dossier "flake_rapport"
 
