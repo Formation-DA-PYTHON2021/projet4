@@ -23,10 +23,6 @@ class HomeMenuController:
         self.view = HomeMenuView(self.menu)
 
     def __call__(self):
-        print("-------------------------------------------------\n"
-              "                  Menu Principal                 \n"
-              "-------------------------------------------------")
-
         self.menu.add("auto", "Créer un tournois", TournamentMenuController())
         self.menu.add("auto", "Reprendre un tournoi", ResumingTournamentMenuController())
         self.menu.add("auto", "Rapports", ReportMenuController())

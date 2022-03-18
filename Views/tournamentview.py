@@ -59,7 +59,7 @@ class ViewResumingTournament:
         for elm in dispalytournament:
             print(elm['name'])
             nametourna.append(elm['name'])
-        selectournament = str(input("Pour séléctionner un tournoi, rentrer son nom : \n => "))
+        selectournament = str(input("Pour sélectionner un tournoi, rentrer son nom : \n => "))
         if selectournament in nametourna:
             return selectournament
 
@@ -342,6 +342,9 @@ class ViewReport:
                   "\n--------------------------------\n")
             return self.choicetourna()
         return listourna
+
+    def menuinfoplayer(self,selectourna):
+        print(f"\n---------- liste des joueurs du tournoi {selectourna['name']}: ----------\n")
 
     def menuinfotourna(self, listourna):
         infotourna = str(input(f"\n---------- Voir les informations pour le tournois  {listourna['name']}:"

@@ -3,6 +3,9 @@ class HomeMenuView:
         self.menu = menu
 
     def _display_menu(self):
+        print("-------------------------------------------------\n"
+              "                  Menu Principal                 \n"
+              "-------------------------------------------------")
         for key, entry in self.menu.items():
             print(f"{key}: {entry.option}")
         print()

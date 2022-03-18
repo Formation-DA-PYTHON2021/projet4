@@ -159,7 +159,7 @@ class ControllerReport:
                 self.view.choicesorting(players)
             elif i == '2':
                 selectourna = self.view.choicetourna()
-                print(f"---------- liste des joueurs du tournoi {selectourna['name']}: ----------\n")
+                self.view.menuinfoplayer(selectourna)
                 assignplayerstourna = []
                 assignplayerstourna.extend(selectourna['assign_player'])
                 playerstourna = []
